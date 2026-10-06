@@ -82,11 +82,12 @@
         font-size: 10.5pt !important;
         line-height: 1.35 !important;
         height: auto !important;
-        overflow: hidden !important;
       }
       header, nav, main, footer, #bottomNavBar, #toastContainer, #adminReturnBanner, .modal-backdrop, .no-print {
         display: none !important;
       }
+      
+      /* 單班確認單列印 */
       #printSheetArea:not(.hidden) {
         display: block !important;
         position: static !important;
@@ -98,6 +99,32 @@
         page-break-inside: avoid !important;
         break-inside: avoid !important;
       }
+
+      /* 批次列印全校各班確認單容器：班與班之間強制換頁 */
+      #batchPrintContainer:not(.hidden) {
+        display: block !important;
+        position: static !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+      }
+      .batch-print-page {
+        page-break-after: always !important;
+        break-after: page !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        box-sizing: border-box !important;
+        width: 100% !important;
+        height: 275mm !important;
+        max-height: 277mm !important;
+        overflow: hidden !important;
+        padding: 0 !important;
+        margin: 0 0 10mm 0 !important;
+      }
+
+      /* 訓育組通知單 */
       #printNoticeArea:not(.hidden) {
         display: block !important;
         position: static !important;
@@ -350,15 +377,15 @@
     <!-- 4. 會場分區地圖 (Map Tab) -->
     <section id="mapTab" class="hidden space-y-4">
       <div class="bg-white rounded-3xl p-5 shadow-xs border border-slate-200 space-y-4">
-        <div class="flex items-center justify-between">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h2 class="text-lg sm:text-xl font-black text-slate-800 flex items-center gap-2">
               <i class="fa-solid fa-map-location-dot text-emerald-500"></i> 佳林國中園遊會分區指引
             </h2>
             <p class="text-xs sm:text-sm text-slate-500">點選分區可直接跳轉至該區域之所有參展班級攤位</p>
           </div>
-          <button id="adminMapEditBtn" onclick="openMapEditModal()" class="hidden px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold border border-slate-300">
-            <i class="fa-solid fa-pen-to-square"></i> 編輯地圖分區
+          <button id="adminMapEditBtn" onclick="openMapEditModal()" class="hidden px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-xs items-center gap-1.5">
+            <i class="fa-solid fa-pen-to-square"></i> 編輯與新增地圖分區
           </button>
         </div>
         <div id="venueMapContainer" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
@@ -647,10 +674,13 @@
               <h2 class="text-xl sm:text-2xl font-black text-slate-800 mt-1">佳林國中園遊會總控制中心</h2>
             </div>
             <div class="flex flex-wrap items-center gap-2">
+              <button onclick="openBatchPrintSheet()" class="px-3.5 py-2 rounded-xl bg-purple-700 hover:bg-purple-800 text-white font-black text-xs sm:text-sm shadow-md flex items-center gap-1.5 transition">
+                <i class="fa-solid fa-copy"></i> 批次列印全校報名表 (A4)
+              </button>
               <button onclick="openNoticePrintSheet()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs sm:text-sm shadow-md flex items-center gap-1.5 transition">
                 <i class="fa-solid fa-print"></i> 列印各班報名須知 (A4)
               </button>
-              <button onclick="openRegRulesModal()" class="px-3.5 py-2 rounded-xl bg-purple-700 hover:bg-purple-800 text-white font-bold text-xs sm:text-sm shadow-xs flex items-center gap-1.5">
+              <button onclick="openRegRulesModal()" class="px-3.5 py-2 rounded-xl bg-slate-700 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm shadow-xs flex items-center gap-1.5">
                 <i class="fa-solid fa-clipboard-list"></i> 報名規定與標題文案
               </button>
               <button onclick="openAccountManageModal()" class="px-3.5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs sm:text-sm shadow-xs flex items-center gap-1.5">
@@ -742,7 +772,7 @@
     </section>
   </main>
 
-  <!-- 正式 A4 列印確認單 -->
+  <!-- 正式 A4 列印確認單 (單班) -->
   <div id="printSheetArea" class="hidden max-w-6xl mx-auto my-6 px-3 sm:px-4">
     <!-- 單一整合控制橫幅 -->
     <div class="no-print bg-emerald-50 border-2 border-emerald-400 rounded-3xl p-4 sm:p-5 mb-5 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md">
@@ -839,6 +869,26 @@
         </table>
       </div>
     </div>
+  </div>
+
+  <!-- 批次列印全校各班報名確認單專屬輸出容器 -->
+  <div id="batchPrintContainer" class="hidden max-w-6xl mx-auto my-6 px-3 sm:px-4">
+    <div class="no-print bg-purple-50 border-2 border-purple-400 rounded-3xl p-4 sm:p-5 mb-5 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md">
+      <div class="flex items-center gap-3 text-purple-950 font-extrabold text-sm sm:text-base">
+        <i class="fa-solid fa-copy text-purple-600 text-2xl shrink-0"></i>
+        <span id="batchPrintHintText">已自動彙整全校已登記班級之確認單！點擊右方按鈕即可一次連續列印（各班自動單頁 A4 換頁）。</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="closeBatchPrintSheet()" class="px-5 py-2.5 rounded-2xl bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-sm">
+          關閉預覽
+        </button>
+        <button onclick="window.print()" class="px-7 py-2.5 rounded-2xl bg-purple-700 hover:bg-purple-800 text-white font-black text-sm shadow-md flex items-center gap-2">
+          <i class="fa-solid fa-print"></i> 批次列印全校報名表 (A4)
+        </button>
+      </div>
+    </div>
+    <!-- 批次單據掛載區 -->
+    <div id="batchPrintPagesList"></div>
   </div>
 
   <!-- 訓育組專用：發放各班報名須知與操作說明通知單 (A4 滿版) -->
@@ -1329,7 +1379,7 @@
         <div>
           <label class="font-bold text-slate-700 block mb-1">Web 應用程式網址 (Web App URL)：</label>
           <input type="url" id="gasAppUrlInput" placeholder="https://script.google.com/macros/s/AKfycb.../exec" class="w-full p-2.5 rounded-xl border border-slate-300 font-mono text-xs">
-          <span class="text-xs text-slate-500 mt-1 block">若留空，系統將自動以本機 LocalStorage 安全存檔。</span>
+          <span class="text-xs text-slate-500 mt-1 block">本系統已預先載入專用雲端試算表網址，開啟即可全校即時雙向連線！</span>
         </div>
 
         <div class="bg-amber-50 border border-amber-200 rounded-2xl p-3.5 space-y-1.5 text-xs text-amber-950">
@@ -1337,9 +1387,9 @@
             <i class="fa-solid fa-graduation-cap text-amber-700"></i>
             <span>教育帳號 (@ntpc.edu.tw / G Suite) 部署關鍵提醒：</span>
           </div>
-          <p>1. 在 Google 試算表點選【擴充功能】→【Apps Script】，貼上下方專用程式碼並存檔。</p>
+          <p>1. 在 Google 試算表點選【擴充功能】→【Apps Script】，貼上專用程式碼並存檔。</p>
           <p>2. 點擊右上角【部署】→【新增部署】，種類選取【網頁應用程式】。</p>
-          <p class="font-black text-rose-700">3. 【執行身分】請選「我」；【誰可以存取】必須切換為「所有人 (Anyone)」，不可僅限機構內部，才能讓班級學生手機免登入回傳！</p>
+          <p class="font-black text-rose-700">3. 【執行身分】請選「我」；【誰可以存取】必須切換為「所有人 (Anyone)」，才能讓學生手機免登入回傳資料！</p>
         </div>
       </div>
 
@@ -1358,20 +1408,31 @@
     </div>
   </div>
 
-  <!-- 10. 會場地圖編輯 Modal -->
+  <!-- 10. 會場地圖編輯與新增分區 Modal (支援新增與刪除分區) -->
   <div id="mapEditModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-3 sm:p-4 overflow-y-auto">
-    <div class="bg-white w-full max-w-xl rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4 my-auto text-xs sm:text-sm">
+    <div class="bg-white w-full max-w-2xl rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4 my-auto text-xs sm:text-sm">
       <div class="flex items-center justify-between border-b pb-3">
-        <h3 class="font-extrabold text-slate-800 text-base sm:text-lg flex items-center gap-2">
-          <i class="fa-solid fa-map-location-dot text-emerald-600"></i> 編輯會場分區指引
-        </h3>
+        <div>
+          <h3 class="font-extrabold text-slate-800 text-base sm:text-lg flex items-center gap-2">
+            <i class="fa-solid fa-map-location-dot text-emerald-600"></i> 會場分區指引管理 (編輯與新增)
+          </h3>
+          <p class="text-xs text-slate-500">可自由新增操場、風雨球場、川堂、藝能大樓等自訂分區</p>
+        </div>
         <button onclick="closeModal('mapEditModal')" class="text-slate-400 hover:text-slate-600 text-lg">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
-      <div id="mapEditZonesList" class="space-y-3"></div>
+
+      <div class="flex justify-end">
+        <button type="button" onclick="addNewVenueZoneRow()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-xs">
+          <i class="fa-solid fa-plus"></i> 新增自訂分區
+        </button>
+      </div>
+
+      <div id="mapEditZonesList" class="space-y-3 max-h-96 overflow-y-auto p-1"></div>
+
       <div class="flex justify-between items-center pt-2 border-t">
-        <button type="button" onclick="resetDefaultVenueZones()" class="text-rose-500 hover:text-rose-700 font-bold">恢復預設</button>
+        <button type="button" onclick="resetDefaultVenueZones()" class="text-rose-500 hover:text-rose-700 font-bold">恢復預設三分區</button>
         <div class="flex items-center gap-2">
           <button onclick="closeModal('mapEditModal')" class="px-4 py-2 bg-slate-100 rounded-xl font-bold text-slate-600">取消</button>
           <button onclick="saveVenueZones()" class="px-5 py-2 bg-emerald-600 text-white rounded-xl font-bold shadow-xs">儲存地圖</button>
@@ -1439,6 +1500,9 @@
           needAssistantTeacher: '需要',
           useBilingual: '是',
           slogan: '801 班起司炒泡麵，一口入魂！',
+          powerDevices: [
+            { id: 'p1', name: '商業用保溫展示燈', watts: 150, count: 1, note: '一般延長線' }
+          ],
           items: [
             { id: 'i1', name: '招牌起司炒泡麵', price: 60, status: '熱賣中', note: '加蛋+10元' },
             { id: 'i2', name: '古早味決明子紅茶', price: 25, status: '熱賣中', note: '微糖去冰' }
@@ -1468,6 +1532,7 @@
           needAssistantTeacher: '不需要',
           useBilingual: '否',
           slogan: '七年五班純手工慢熬黑糖！',
+          powerDevices: [],
           items: [
             { id: 'i4', name: '黑糖珍珠鮮奶', price: 50, status: '熱賣中', note: '純鮮奶' }
           ],
@@ -1486,6 +1551,7 @@
           needAssistantTeacher: '需要',
           useBilingual: '是',
           slogan: '巨大布偶福袋抱回家！',
+          powerDevices: [],
           items: [
             { id: 'i6', name: '套圈圈 10 枚', price: 30, status: '熱賣中', note: '有安慰獎' }
           ],
@@ -1518,6 +1584,7 @@
     let powerDeviceRows = [];
     let itemPriceRows = [];
     let currentDealCompressedBase64 = '';
+    let tempEditingZones = [];
 
     function persistData() {
       localStorage.setItem('jl_carnival_data_v5', JSON.stringify(appState.data));
@@ -1580,6 +1647,8 @@
 
     function switchTab(tabId) {
       closeNoticeSheet();
+      closeBatchPrintSheet();
+
       if (tabId !== 'registrationTab') {
         const pSheet = document.getElementById('printSheetArea');
         if (pSheet) pSheet.classList.add('hidden');
@@ -1909,6 +1978,8 @@
         existing.pin = pin;
         existing.needAssistantTeacher = needAssistant;
         existing.useBilingual = useBilingual;
+        existing.powerDevices = JSON.parse(JSON.stringify(powerDeviceRows));
+        existing.regDescription = descHtml;
         existing.items = itemPriceRows.map(r => ({
           id: 'i_' + Date.now() + Math.random().toString(36).substr(2, 4),
           name: r.name,
@@ -1930,6 +2001,8 @@
           needAssistantTeacher: needAssistant,
           useBilingual: useBilingual,
           slogan: `${classId} 班熱烈歡迎大家！`,
+          powerDevices: JSON.parse(JSON.stringify(powerDeviceRows)),
+          regDescription: descHtml,
           items: itemPriceRows.map(r => ({
             id: 'i_' + Date.now() + Math.random().toString(36).substr(2, 4),
             name: r.name,
@@ -1986,6 +2059,7 @@
 
       adjustPrintNoticesFontSize(itemPriceRows.length);
       closeNoticeSheet();
+      closeBatchPrintSheet();
 
       const printArea = document.getElementById('printSheetArea');
       printArea.classList.remove('hidden');
@@ -2012,8 +2086,157 @@
       }
     }
 
+    // ================= 批次列印全校各班報名表模組 =================
+    function openBatchPrintSheet() {
+      if (appState.data.booths.length === 0) {
+        showToast('目前尚無已登記報名的班級！', 'warn');
+        return;
+      }
+
+      document.getElementById('printSheetArea').classList.add('hidden');
+      closeNoticeSheet();
+
+      const batchContainer = document.getElementById('batchPrintContainer');
+      const pagesList = document.getElementById('batchPrintPagesList');
+      const hintText = document.getElementById('batchPrintHintText');
+
+      hintText.innerText = `全校已登記 ${appState.data.booths.length} 個班級！點擊右方按鈕即可一次整批連續列印（各班自動 A4 獨立單頁換頁）。`;
+      pagesList.innerHTML = '';
+
+      const mainTitle = appState.regRules.mainTitle || DEFAULT_REG_RULES.mainTitle;
+      const compactPower = appState.regRules.powerNotice.replace(/\n+/g, ' ');
+      const compactGeneral = `${appState.regRules.generalNotice.replace(/\n+/g, ' ')} ${appState.regRules.bilingualSubsidy || ''}`;
+
+      appState.data.booths.forEach((b, index) => {
+        const pageDiv = document.createElement('div');
+        pageDiv.className = 'batch-print-page bg-white text-slate-900 border-2 border-slate-900 rounded-3xl p-6 sm:p-10 shadow-xl mb-6 print:border-none print:shadow-none print:p-0 print:mb-0';
+
+        // 產生該班用電表格
+        let totalWatts = 0;
+        let powerHtml = '<table class="w-full text-xs border border-slate-400"><thead><tr class="bg-slate-50 border-b border-slate-400"><th class="p-1 border-r border-slate-400 w-12 text-center">項次</th><th class="p-1 border-r border-slate-400">設備名稱</th><th class="p-1 border-r border-slate-400 w-20 text-center">瓦數</th><th class="p-1 border-r border-slate-400 w-16 text-center">台數</th><th class="p-1 border-r border-slate-400 w-24 text-right">小計</th><th class="p-1">備註說明</th></tr></thead><tbody>';
+        const devices = b.powerDevices || [];
+        if (devices.length === 0) {
+          powerHtml += '<tr><td colspan="6" class="p-1 text-center text-slate-500 font-bold">本攤位採【不用電】原則</td></tr>';
+        } else {
+          devices.forEach((r, idx) => {
+            const sub = (r.watts || 0) * (r.count || 1);
+            totalWatts += sub;
+            powerHtml += `<tr class="border-b border-slate-300"><td class="p-1 border-r border-slate-300 text-center font-mono">${idx + 1}</td><td class="p-1 border-r border-slate-300 font-bold">${r.name}</td><td class="p-1 border-r border-slate-300 text-center font-mono">${r.watts}W</td><td class="p-1 border-r border-slate-300 text-center font-mono">${r.count}</td><td class="p-1 border-r border-slate-300 text-right font-mono font-bold">${sub}W</td><td class="p-1 text-slate-600">${r.note || ''}</td></tr>`;
+          });
+          powerHtml += `<tr class="bg-slate-50 font-bold"><td colspan="4" class="p-1 text-right border-r border-slate-400">合計總瓦數：</td><td class="p-1 text-right font-mono font-black border-r border-slate-400">${totalWatts} W</td><td class="p-1 text-xs ${totalWatts > 1000 ? 'text-rose-700 font-black' : 'text-emerald-700'}">${totalWatts > 1000 ? '⚠️ 超過 1000W 上限規定' : '✅ 符合 1000W 以內安全規範'}</td></tr>`;
+        }
+        powerHtml += '</tbody></table>';
+
+        // 產生該班販售商品表格
+        let priceHtml = '<table class="w-full text-xs border border-slate-400"><thead><tr class="bg-slate-50 border-b border-slate-400"><th class="p-1 border-r border-slate-400 w-12 text-center">項次</th><th class="p-1 border-r border-slate-400">販售品項</th><th class="p-1 border-r border-slate-400 w-28 text-right">售價(元)</th><th class="p-1">規格/促銷說明</th></tr></thead><tbody>';
+        const items = b.items || [];
+        if (items.length === 0) {
+          priceHtml += '<tr><td colspan="4" class="p-1 text-center text-slate-500 font-bold">尚未登記品項</td></tr>';
+        } else {
+          items.forEach((r, idx) => {
+            priceHtml += `<tr class="border-b border-slate-300"><td class="p-1 border-r border-slate-300 text-center font-mono">${idx + 1}</td><td class="p-1 border-r border-slate-300 font-bold">${r.name}</td><td class="p-1 border-r border-slate-300 text-right font-mono font-bold">${r.price} 元</td><td class="p-1 text-slate-600">${r.note || ''}</td></tr>`;
+          });
+        }
+        priceHtml += '</tbody></table>';
+
+        pageDiv.innerHTML = `
+          <div class="text-center space-y-2 mb-3">
+            <h2 class="text-2xl sm:text-3xl font-black tracking-wide text-slate-900">${mainTitle}</h2>
+            <h3 class="text-lg sm:text-xl font-bold tracking-wide text-slate-800">班級設攤申請、用電調查與售價確認單</h3>
+            <div class="flex justify-between items-center text-xs sm:text-sm text-slate-600 pt-1 font-mono">
+              <span class="font-bold">正式單號：JL-115-B${(index + 1).toString().padStart(3, '0')}</span>
+              <span>列印批次：第 ${index + 1} / ${appState.data.booths.length} 班</span>
+            </div>
+          </div>
+
+          <table class="w-full border-collapse border-2 border-slate-900 text-left text-xs sm:text-sm">
+            <tbody>
+              <tr>
+                <td class="border border-slate-800 py-2 px-3 font-bold bg-slate-100 whitespace-nowrap w-36">參展班級/單位</td>
+                <td class="border border-slate-800 py-2 px-3 font-black text-base">${b.classId} 班</td>
+                <td class="border border-slate-800 py-2 px-3 font-bold bg-slate-100 whitespace-nowrap w-32">攤位類別</td>
+                <td class="border border-slate-800 py-2 px-3 font-bold">${b.category || '--'}</td>
+              </tr>
+              <tr>
+                <td class="border border-slate-800 py-2 px-3 font-bold bg-slate-100 whitespace-nowrap">攤位名稱</td>
+                <td colspan="3" class="border border-slate-800 py-2 px-3 font-bold text-base">${b.name}</td>
+              </tr>
+              <tr>
+                <td class="border border-slate-800 py-2 px-3 font-bold bg-slate-100 whitespace-nowrap">學生/單位負責人</td>
+                <td class="border border-slate-800 py-2 px-3">${b.leader || '--'}</td>
+                <td class="border border-slate-800 py-2 px-3 font-bold bg-slate-100 whitespace-nowrap">指導導師/顧問</td>
+                <td class="border border-slate-800 py-2 px-3">${b.teacher || '--'}</td>
+              </tr>
+              <tr>
+                <td class="border border-slate-800 py-2 px-3 font-bold bg-slate-100 whitespace-nowrap">副導師協助需求</td>
+                <td class="border border-slate-800 py-2 px-3 font-bold">${b.needAssistantTeacher || '不需要'}</td>
+                <td class="border border-slate-800 py-2 px-3 font-bold bg-slate-100 whitespace-nowrap">雙語佈置申請</td>
+                <td class="border border-slate-800 py-2 px-3 font-bold text-emerald-800">${b.useBilingual === '是' ? '是 (申請500元補助)' : '否'}</td>
+              </tr>
+              <tr>
+                <td class="border border-slate-800 py-2 px-3 font-bold bg-slate-100 whitespace-nowrap align-top">用電設備彙整</td>
+                <td colspan="3" class="border border-slate-800 p-2">${powerHtml}</td>
+              </tr>
+              <tr>
+                <td class="border border-slate-800 py-2 px-3 font-bold bg-slate-100 whitespace-nowrap align-top">品項與售價定價</td>
+                <td colspan="3" class="border border-slate-800 p-2">${priceHtml}</td>
+              </tr>
+              <tr>
+                <td class="border border-slate-800 py-2 px-3 font-bold bg-slate-100 whitespace-nowrap align-top">說明與衛生承諾</td>
+                <td colspan="3" class="border border-slate-800 py-2 px-3 leading-relaxed">${b.regDescription || '無特殊備註。'}</td>
+              </tr>
+              <tr>
+                <td class="border border-slate-800 py-2 px-3 font-bold bg-slate-100 whitespace-nowrap align-top">設攤與用電須知</td>
+                <td colspan="3" class="border border-slate-800 py-2 px-3 leading-snug space-y-1 text-[10.5px]">
+                  <div class="font-bold text-slate-900">※【用電申請規範重點】</div>
+                  <div class="text-slate-800 pl-1">${compactPower}</div>
+                  <div class="font-bold text-slate-900 pt-1 border-t border-slate-300">※【重要設攤注意事項與雙語補助】</div>
+                  <div class="text-slate-800 pl-1">${compactGeneral}</div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="pt-3">
+            <div class="text-xs sm:text-sm font-black mb-1 text-slate-900">【班級確認與學校簽核欄】（本單核章後請繳交至學務處訓育組）</div>
+            <table class="w-full border-collapse border-2 border-slate-900 text-center text-xs sm:text-sm">
+              <thead>
+                <tr class="bg-slate-100">
+                  <th class="border border-slate-800 py-1.5 px-1 w-1/5">學生負責人簽章</th>
+                  <th class="border border-slate-800 py-1.5 px-1 w-1/5">指導導師核章</th>
+                  <th class="border border-slate-800 py-1.5 px-1 w-1/5">學務處訓育組</th>
+                  <th class="border border-slate-800 py-1.5 px-1 w-1/5">總務處用電審查</th>
+                  <th class="border border-slate-800 py-1.5 px-1 w-1/5">學務主任決行</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="h-24">
+                  <td class="border border-slate-800 align-bottom pb-1 text-slate-400 font-bold">（簽名）</td>
+                  <td class="border border-slate-800 align-bottom pb-1 text-slate-400 font-bold">（簽名蓋章）</td>
+                  <td class="border border-slate-800 align-bottom pb-1 text-slate-400 font-bold">（核章）</td>
+                  <td class="border border-slate-800 align-bottom pb-1 text-slate-400 font-bold">（安全確認）</td>
+                  <td class="border border-slate-800 align-bottom pb-1 text-slate-400 font-bold">（決行）</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        `;
+        pagesList.appendChild(pageDiv);
+      });
+
+      batchContainer.classList.remove('hidden');
+      batchContainer.scrollIntoView({ behavior: 'smooth' });
+      showToast(`已成功排版全校 ${appState.data.booths.length} 個班級之 A4 單張確認單！`, 'info');
+    }
+
+    function closeBatchPrintSheet() {
+      const el = document.getElementById('batchPrintContainer');
+      if (el) el.classList.add('hidden');
+    }
+
     function openNoticePrintSheet() {
       document.getElementById('printSheetArea').classList.add('hidden');
+      closeBatchPrintSheet();
 
       const noticeArea = document.getElementById('printNoticeArea');
       document.getElementById('noticeSheetStepsText').innerText = appState.regRules.operationSteps || DEFAULT_REG_RULES.operationSteps;
@@ -2342,20 +2565,23 @@
       }
     }
 
+    // ================= 會場地圖模組 (支援編輯與新增自訂分區) =================
     function renderVenueMap() {
       const container = document.getElementById('venueMapContainer');
       const editBtn = document.getElementById('adminMapEditBtn');
       if (editBtn) {
         editBtn.classList.toggle('hidden', appState.role !== 'admin');
+        editBtn.classList.toggle('flex', appState.role === 'admin');
       }
       if (!container) return;
+
       container.innerHTML = appState.venueZones.map(z => {
         const count = appState.data.booths.filter(b => b.location && b.location.startsWith(z.code)).length;
         return `
           <div onclick="filterByZone('${z.code}')" class="bg-slate-50 hover:bg-slate-100 p-5 rounded-3xl border border-slate-200 cursor-pointer transition space-y-2">
             <div class="text-3xl">${z.icon || '📍'}</div>
             <h3 class="font-extrabold text-slate-800 text-base">${z.name}</h3>
-            <p class="text-xs text-slate-500 leading-relaxed">${z.desc}</p>
+            <p class="text-xs text-slate-500 leading-relaxed">${z.desc || ''}</p>
             <div class="pt-2 font-bold text-xs text-indigo-600">目前共 ${count} 個攤位進駐 →</div>
           </div>
         `;
@@ -2371,55 +2597,92 @@
     }
 
     function openMapEditModal() {
-      const container = document.getElementById('mapEditZonesList');
-      if (!container) return;
-      container.innerHTML = appState.venueZones.map((z, idx) => `
-        <div class="p-3 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
-          <div class="flex items-center gap-2">
-            <span class="font-bold text-slate-700">代碼:</span>
-            <input type="text" id="mapZoneCode_${idx}" value="${z.code}" class="w-16 p-1.5 rounded-lg border font-mono font-bold text-center">
-            <span class="font-bold text-slate-700">Emoji:</span>
-            <input type="text" id="mapZoneIcon_${idx}" value="${z.icon}" class="w-20 p-1.5 rounded-lg border text-center">
-          </div>
-          <div>
-            <label class="font-bold text-slate-700 block mb-1">分區名稱</label>
-            <input type="text" id="mapZoneName_${idx}" value="${z.name}" class="w-full p-2 rounded-lg border font-bold">
-          </div>
-          <div>
-            <label class="font-bold text-slate-700 block mb-1">分區說明</label>
-            <textarea id="mapZoneDesc_${idx}" rows="2" class="w-full p-2 rounded-lg border">${z.desc}</textarea>
-          </div>
-        </div>
-      `).join('');
+      tempEditingZones = JSON.parse(JSON.stringify(appState.venueZones));
+      renderMapEditZonesList();
       openModal('mapEditModal');
     }
 
-    function saveVenueZones() {
-      appState.venueZones.forEach((z, idx) => {
-        const code = document.getElementById(`mapZoneCode_${idx}`)?.value.trim();
-        const icon = document.getElementById(`mapZoneIcon_${idx}`)?.value.trim();
-        const name = document.getElementById(`mapZoneName_${idx}`)?.value.trim();
-        const desc = document.getElementById(`mapZoneDesc_${idx}`)?.value.trim();
-        if (code) z.code = code;
-        if (icon) z.icon = icon;
-        if (name) z.name = name;
-        if (desc) z.desc = desc;
+    function renderMapEditZonesList() {
+      const container = document.getElementById('mapEditZonesList');
+      if (!container) return;
+
+      container.innerHTML = tempEditingZones.map((z, idx) => `
+        <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl space-y-2.5 relative">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2 flex-1">
+              <span class="font-bold text-slate-700">代碼:</span>
+              <input type="text" value="${z.code}" onchange="updateTempZoneField(${idx}, 'code', this.value)" class="w-16 p-1.5 rounded-lg border font-mono font-bold text-center bg-white">
+              <span class="font-bold text-slate-700">Emoji:</span>
+              <input type="text" value="${z.icon || '📍'}" onchange="updateTempZoneField(${idx}, 'icon', this.value)" class="w-20 p-1.5 rounded-lg border text-center bg-white">
+            </div>
+            <button type="button" onclick="deleteTempZone(${idx})" class="text-rose-500 hover:text-rose-700 font-bold text-xs px-2 py-1 rounded-lg hover:bg-rose-50 transition" title="刪除此分區">
+              <i class="fa-solid fa-trash-can mr-1"></i> 刪除
+            </button>
+          </div>
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">分區名稱</label>
+            <input type="text" value="${z.name}" onchange="updateTempZoneField(${idx}, 'name', this.value)" class="w-full p-2 rounded-lg border font-bold bg-white">
+          </div>
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">分區說明 (可註明主要展出內容或動線)</label>
+            <textarea rows="2" onchange="updateTempZoneField(${idx}, 'desc', this.value)" class="w-full p-2 rounded-lg border bg-white text-xs">${z.desc || ''}</textarea>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function updateTempZoneField(idx, field, val) {
+      if (tempEditingZones[idx]) {
+        tempEditingZones[idx][field] = val.trim();
+      }
+    }
+
+    function addNewVenueZoneRow() {
+      const nextCode = String.fromCharCode(65 + tempEditingZones.length);
+      tempEditingZones.push({
+        code: nextCode,
+        name: `${nextCode}區 - 新自訂分區`,
+        icon: '🎪📍',
+        desc: '請輸入此分區之活動指引說明...'
       });
+      renderMapEditZonesList();
+      showToast(`已新增 ${nextCode} 區，請設定名稱與說明！`, 'info');
+    }
+
+    function deleteTempZone(idx) {
+      if (tempEditingZones.length <= 1) {
+        showToast('至少需保留 1 個會場分區！', 'warn');
+        return;
+      }
+      tempEditingZones.splice(idx, 1);
+      renderMapEditZonesList();
+    }
+
+    function saveVenueZones() {
+      // 驗證代碼是否重複
+      const codes = tempEditingZones.map(z => z.code.toUpperCase());
+      const hasDup = new Set(codes).size !== codes.length;
+      if (hasDup) {
+        showToast('各分區代碼不可重複！請重新檢查。', 'error');
+        return;
+      }
+
+      appState.venueZones = JSON.parse(JSON.stringify(tempEditingZones));
       persistData();
       renderVenueMap();
       closeModal('mapEditModal');
-      showToast('會場分區指引已成功更新！', 'success');
+      showToast('會場分區指引已成功儲存並同步！', 'success');
       autoSyncIfNeeded();
     }
 
     function resetDefaultVenueZones() {
-      appState.venueZones = [
+      tempEditingZones = [
         { code: 'A', name: 'A區 - 操場環形跑道', icon: '🏃‍♂️🍜', desc: '美食熱炒、炸物、大會主舞台！' },
         { code: 'B', name: 'B區 - 風雨球場', icon: '🎯🧋', desc: '趣味益智遊戲、射飛鏢、套圈圈、手搖冷飲。' },
         { code: 'C', name: 'C區 - 行政大樓川堂', icon: '🎪🎨', desc: '大會服務台、愛心義賣、似顏繪、醫療站。' }
       ];
-      openMapEditModal();
-      showToast('已恢復預設三大分區設定', 'info');
+      renderMapEditZonesList();
+      showToast('已還原為系統預設三大分區設定', 'info');
     }
 
     function openRoleModal() {
@@ -2441,6 +2704,7 @@
 
     function setRole(roleName, boothId = null) {
       closeNoticeSheet();
+      closeBatchPrintSheet();
       appState.role = roleName;
       if (boothId) appState.currentBoothId = boothId;
       updateRoleUI();
@@ -2831,7 +3095,9 @@
           displayEl.innerText = finalSlot;
 
           booth.location = finalSlot;
-          booth.zone = (finalSlot.startsWith('A') ? 'A區' : (finalSlot.startsWith('B') ? 'B區' : 'C區'));
+          const prefix = finalSlot.split('-')[0];
+          const matchedZone = appState.venueZones.find(z => z.code === prefix);
+          booth.zone = matchedZone ? matchedZone.name : `${prefix}區`;
 
           persistData();
           renderStalls();
@@ -2859,7 +3125,9 @@
       unassigned.forEach(b => {
         const slot = shuffled.pop();
         b.location = slot;
-        b.zone = (slot.startsWith('A') ? 'A區' : (slot.startsWith('B') ? 'B區' : 'C區'));
+        const prefix = slot.split('-')[0];
+        const matchedZone = appState.venueZones.find(z => z.code === prefix);
+        b.zone = matchedZone ? matchedZone.name : `${prefix}區`;
       });
 
       persistData();
@@ -2973,6 +3241,9 @@
           b.location = location;
         }
       } else {
+        const prefix = location.split('-')[0];
+        const matchedZone = appState.venueZones.find(z => z.code === prefix);
+
         appState.data.booths.push({
           id: 'b_' + classId + '_' + Date.now().toString().slice(-3),
           classId,
@@ -2981,7 +3252,7 @@
           pin,
           category,
           location,
-          zone: location.startsWith('A') ? 'A區' : (location.startsWith('B') ? 'B區' : 'C區'),
+          zone: matchedZone ? matchedZone.name : `${prefix}區`,
           items: [],
           deals: []
         });
@@ -3142,7 +3413,7 @@ function doPost(e) {
       appState.gasUrl = document.getElementById('gasAppUrlInput').value.trim();
       localStorage.setItem('jl_carnival_gas_url', appState.gasUrl);
       const dot = document.getElementById('gasStatusDot');
-      if (dot) dot.className = appState.gasUrl ? 'w-2.5 h-2.5 rounded-full bg-emerald-500' : 'w-2.5 h-2.5 rounded-full bg-slate-400';
+      if (dot) dot.className = appState.gasUrl ? 'w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-emerald-300' : 'w-2.5 h-2.5 rounded-full bg-slate-400';
       closeModal('gasModal');
       showToast('雲端同步設定已儲存！', 'success');
       if (appState.gasUrl) syncWithGAS();
@@ -3177,7 +3448,7 @@ function doPost(e) {
         console.warn('GAS Sync offline or blocked', err);
         const dot = document.getElementById('gasStatusDot');
         if (dot) dot.className = 'w-2.5 h-2.5 rounded-full bg-amber-500';
-        showToast('雲端連線失敗，已自動切換回本機安全保存。請確認 GAS 部署是否設為「任何人」！', 'warn');
+        showToast('雲端連線失敗，已自動切換回本機安全保存。請確認 GAS 部署是否設為「所有人」！', 'warn');
       });
     }
 
@@ -3200,6 +3471,8 @@ function doPost(e) {
 
     function initApp() {
       closeNoticeSheet();
+      closeBatchPrintSheet();
+
       const savedData = localStorage.getItem('jl_carnival_data_v5');
       if (savedData) {
         try {
@@ -3243,7 +3516,7 @@ function doPost(e) {
         const gasInput = document.getElementById('gasAppUrlInput');
         if (gasInput) gasInput.value = savedGas;
         const dot = document.getElementById('gasStatusDot');
-        if (dot) dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
+        if (dot) dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-emerald-300';
 
         // 啟動時自動嘗試自雲端試算表載入最新資料
         fetch(savedGas)
