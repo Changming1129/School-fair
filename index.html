@@ -1,0 +1,3292 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="pageTitleDisplay">🎪 佳林國中歡樂園遊會 - 智慧導覽、線上報名、用電調查與攤位管理系統</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- FontAwesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Google Fonts: Inter & Noto Sans TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Noto Sans TC"', 'Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-size: 15px;
+      line-height: 1.6;
+      background-color: #f8fafc;
+      color: #1e293b;
+    }
+    
+    @keyframes marqueeScroll {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+    .animate-marquee {
+      display: inline-block;
+      white-space: nowrap;
+      animation: marqueeScroll 26s linear infinite;
+    }
+    .animate-marquee:hover {
+      animation-play-state: paused;
+    }
+
+    .rich-editor-content:empty:before {
+      content: attr(placeholder);
+      color: #94a3b8;
+      pointer-events: none;
+      display: block;
+    }
+    .rich-editor-content ol {
+      list-style-type: decimal;
+      padding-left: 1.5rem;
+      margin-top: 0.25rem;
+      margin-bottom: 0.25rem;
+    }
+    .rich-editor-content ul {
+      list-style-type: disc;
+      padding-left: 1.5rem;
+      margin-top: 0.25rem;
+      margin-bottom: 0.25rem;
+    }
+
+    /* 滿版單張 A4 列印控制 */
+    @page {
+      size: A4 portrait;
+      margin: 7mm 10mm 7mm 10mm;
+    }
+    @media print {
+      html, body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        font-size: 10.5pt !important;
+        line-height: 1.35 !important;
+        height: auto !important;
+        overflow: hidden !important;
+      }
+      header, nav, main, footer, #bottomNavBar, #toastContainer, #adminReturnBanner, .modal-backdrop, .no-print {
+        display: none !important;
+      }
+      #printSheetArea:not(.hidden) {
+        display: block !important;
+        position: static !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+      #printNoticeArea:not(.hidden) {
+        display: block !important;
+        position: static !important;
+        width: 100% !important;
+        max-height: 280mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+        overflow: hidden !important;
+      }
+
+      #printNoticeArea .notice-sheet-container {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        height: 272mm !important;
+        max-height: 274mm !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+        border: none !important;
+        padding: 0 !important;
+      }
+      #printNoticeArea .notice-header {
+        margin-bottom: 6px !important;
+        padding-bottom: 6px !important;
+        border-bottom: 2px solid #000000 !important;
+      }
+      #printNoticeArea .notice-main-title {
+        font-size: 22pt !important;
+        font-weight: 900 !important;
+        line-height: 1.2 !important;
+        letter-spacing: 0.03em !important;
+      }
+      #printNoticeArea .notice-sub-title {
+        font-size: 15pt !important;
+        font-weight: 800 !important;
+        line-height: 1.25 !important;
+        margin-top: 4px !important;
+      }
+      #printNoticeArea .notice-meta-text {
+        font-size: 10pt !important;
+        color: #222222 !important;
+        margin-top: 5px !important;
+      }
+      #printNoticeArea .notice-body {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        flex-grow: 1 !important;
+        margin: 6px 0 !important;
+        gap: 8px !important;
+      }
+      #printNoticeArea .notice-sheet-card {
+        border: 1.8px solid #000000 !important;
+        border-radius: 10px !important;
+        padding: 12px 16px !important;
+        margin-bottom: 0 !important;
+        background: #ffffff !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+      #printNoticeArea .notice-block-title {
+        font-size: 12.5pt !important;
+        font-weight: 900 !important;
+        margin-bottom: 6px !important;
+      }
+      #printNoticeArea #noticeSheetStepsText {
+        font-size: 11pt !important;
+        line-height: 1.58 !important;
+      }
+      #printNoticeArea #noticeSheetPowerText,
+      #printNoticeArea #noticeSheetGeneralText {
+        font-size: 10pt !important;
+        line-height: 1.48 !important;
+      }
+      #printNoticeArea .notice-deadline-box {
+        padding: 9px 14px !important;
+        font-size: 11pt !important;
+        line-height: 1.4 !important;
+        border: 1.5px solid #000000 !important;
+        border-radius: 8px !important;
+      }
+      #printNoticeArea .notice-footer {
+        margin-top: 0 !important;
+        padding-top: 8px !important;
+        font-size: 11pt !important;
+        font-weight: bold !important;
+        border-top: 2px solid #000000 !important;
+      }
+      table {
+        page-break-inside: avoid !important;
+        width: 100% !important;
+      }
+      td, th {
+        border-color: #000000 !important;
+      }
+
+      .notices-compact-tier1 {
+        font-size: 8.5pt !important;
+        line-height: 1.25 !important;
+        padding: 4px 6px !important;
+      }
+      .notices-compact-tier2 {
+        font-size: 7.2pt !important;
+        line-height: 1.15 !important;
+        padding: 3px 5px !important;
+      }
+      .notices-compact-tier3 {
+        font-size: 6.4pt !important;
+        line-height: 1.05 !important;
+        padding: 2px 4px !important;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-rose-500 selection:text-white pb-24 sm:pb-8">
+
+  <!-- 頂部身分切換回到管理員懸浮提示列 -->
+  <div id="adminReturnBanner" class="hidden no-print bg-amber-500 text-white px-4 py-2 text-center text-sm font-bold flex items-center justify-between shadow-md sticky top-0 z-50">
+    <div class="flex items-center gap-2 mx-auto">
+      <i class="fa-solid fa-user-shield text-amber-200"></i>
+      <span>您正以班級視角維護資料</span>
+      <button onclick="returnToAdminRole()" class="ml-3 bg-slate-900 hover:bg-slate-800 text-amber-300 px-3 py-1 rounded-xl text-xs font-black shadow transition">
+        <i class="fa-solid fa-arrow-left"></i> 一鍵返回大會管理者後台
+      </button>
+    </div>
+  </div>
+
+  <!-- 頂部即時公告跑馬燈 -->
+  <div class="no-print bg-gradient-to-r from-rose-600 via-amber-600 to-indigo-600 text-white text-xs sm:text-sm font-bold py-2 px-3 shadow-xs flex items-center overflow-hidden">
+    <div class="flex items-center gap-1.5 shrink-0 bg-white/20 backdrop-blur-sm px-2.5 py-0.5 rounded-full mr-2.5">
+      <i class="fa-solid fa-bullhorn text-amber-300"></i>
+      <span class="tracking-wide">大會即時廣播</span>
+    </div>
+    <div class="overflow-hidden relative w-full whitespace-nowrap">
+      <div id="topMarqueeText" class="animate-marquee font-medium">
+        🎪 歡迎光臨 115 學年度佳林國中歡樂校慶園遊會！各班精彩美食與闖關活動火熱進行中，請攜帶環保餐具自備袋！
+      </div>
+    </div>
+  </div>
+
+  <!-- 主導覽列 -->
+  <header class="no-print bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('stallsTab')">
+        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-br from-rose-500 to-amber-500 flex items-center justify-center text-white text-xl sm:text-2xl shadow-md transform hover:rotate-6 transition">
+          🎪
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 id="navMainTitleDisplay" class="text-base sm:text-xl font-black text-slate-800 tracking-tight">佳林國中歡樂園遊會</h1>
+            <span class="hidden sm:inline-block px-2 py-0.5 bg-rose-100 text-rose-700 text-xs font-bold rounded-md">校慶專用</span>
+          </div>
+          <p id="navSubtitleDisplay" class="text-xs text-slate-500 font-medium hidden sm:block">智慧導覽、線上報名、用電調查與攤位管理系統</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 sm:gap-3">
+        <button onclick="openModal('gasModal')" title="Google 雲端試算表同步設定" class="flex items-center gap-1.5 text-xs sm:text-sm font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-xl transition">
+          <i class="fa-solid fa-cloud text-indigo-500"></i>
+          <span class="hidden sm:inline">雲端同步</span>
+          <span id="gasStatusDot" class="w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-emerald-300"></span>
+        </button>
+
+        <button onclick="openRoleModal()" class="flex items-center gap-2 text-xs sm:text-sm font-bold bg-gradient-to-r from-rose-500 to-amber-500 hover:from-rose-600 hover:to-amber-600 text-white px-3.5 py-2 rounded-xl shadow-xs transition">
+          <i class="fa-solid fa-id-badge"></i>
+          <span id="currentRoleLabel">訪客模式</span>
+        </button>
+
+        <button id="quickLogoutBtn" onclick="handleLogout()" title="登出並清除密碼" class="hidden items-center gap-1.5 text-xs sm:text-sm font-bold bg-slate-800 hover:bg-slate-900 text-slate-200 px-3 py-2 rounded-xl transition">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span class="hidden sm:inline">登出</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 桌面版分頁列 -->
+    <nav class="hidden sm:flex border-t border-slate-100 bg-slate-50/70 px-4">
+      <div class="max-w-6xl mx-auto w-full flex items-center gap-1">
+        <button onclick="switchTab('stallsTab')" id="desktop-tab-stallsTab" class="px-5 py-2.5 text-sm font-bold border-b-2 border-rose-500 text-rose-600 transition flex items-center gap-2">
+          <i class="fa-solid fa-store"></i> 逛攤位市集
+        </button>
+        <button onclick="switchTab('dealsTab')" id="desktop-tab-dealsTab" class="px-5 py-2.5 text-sm font-bold border-b-2 border-transparent text-slate-600 hover:text-slate-900 transition flex items-center gap-2">
+          <i class="fa-solid fa-fire text-amber-500"></i> 限時特價快訊
+        </button>
+        <button onclick="switchTab('announcementsTab')" id="desktop-tab-announcementsTab" class="px-5 py-2.5 text-sm font-bold border-b-2 border-transparent text-slate-600 hover:text-slate-900 transition flex items-center gap-2">
+          <i class="fa-solid fa-bullhorn text-indigo-500"></i> 大會廣播
+        </button>
+        <button onclick="switchTab('mapTab')" id="desktop-tab-mapTab" class="px-5 py-2.5 text-sm font-bold border-b-2 border-transparent text-slate-600 hover:text-slate-900 transition flex items-center gap-2">
+          <i class="fa-solid fa-map-location-dot text-emerald-500"></i> 會場地圖
+        </button>
+        <button onclick="switchTab('registrationTab')" id="desktop-tab-registrationTab" class="px-5 py-2.5 text-sm font-bold border-b-2 border-transparent text-slate-600 hover:text-slate-900 transition flex items-center gap-2">
+          <i class="fa-solid fa-file-pen text-purple-600"></i> 班級攤位報名表
+        </button>
+        <button onclick="switchTab('portalTab')" id="desktop-tab-portalTab" class="px-5 py-2.5 text-sm font-bold border-b-2 border-transparent text-slate-600 hover:text-slate-900 transition flex items-center gap-2 ml-auto">
+          <i class="fa-solid fa-sliders text-rose-500"></i> <span id="desktopPortalTabName">工作台</span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="max-w-6xl mx-auto w-full px-3 sm:px-4 py-4 sm:py-6 flex-1 no-print">
+
+    <!-- 1. 逛攤位市集 (Stalls Tab) -->
+    <section id="stallsTab" class="space-y-4">
+      <div class="bg-white rounded-3xl p-4 sm:p-5 shadow-xs border border-slate-200 space-y-3.5">
+        <div class="relative">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+          <input type="text" id="stallSearchInput" oninput="handleStallSearch()" placeholder="搜尋班級 (例如 801、705)、商品名稱、炒泡麵、珍奶..." class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 focus:bg-white focus:ring-2 focus:ring-rose-400 outline-none text-sm transition">
+        </div>
+        <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs sm:text-sm font-bold" id="categoryChips"></div>
+      </div>
+      <div id="stallsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </section>
+
+    <!-- 2. 限時特價快訊 (Deals Tab) -->
+    <section id="dealsTab" class="hidden space-y-4">
+      <div class="bg-gradient-to-r from-amber-500 to-rose-500 rounded-3xl p-5 sm:p-6 text-white shadow-md flex items-center justify-between">
+        <div>
+          <span class="px-2.5 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-black tracking-widest uppercase">Special Offers</span>
+          <h2 class="text-xl sm:text-2xl font-black mt-1">🔥 全校限時破盤特價專案</h2>
+          <p class="text-xs sm:text-sm text-white/90 mt-1">各班級現場特惠促銷！出示手機頁面即可直接到攤位購買折抵。</p>
+        </div>
+        <div class="text-3xl sm:text-5xl opacity-80 hidden sm:block">⚡</div>
+      </div>
+      <div id="dealsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+    </section>
+
+    <!-- 3. 大會廣播公告 (Announcements Tab) -->
+    <section id="announcementsTab" class="hidden space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-lg sm:text-xl font-black text-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-bullhorn text-indigo-500"></i> 大會官方廣播專區
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-500">即時公告、重要賽程提醒、失物招領與摸彩結果</p>
+        </div>
+        <button id="adminAnnouncementQuickBtn" onclick="openAddAnnouncementModal()" class="hidden px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-xs flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-plus"></i> 發布新公告
+        </button>
+      </div>
+      <div id="announcementsList" class="space-y-3"></div>
+    </section>
+
+    <!-- 4. 會場分區地圖 (Map Tab) -->
+    <section id="mapTab" class="hidden space-y-4">
+      <div class="bg-white rounded-3xl p-5 shadow-xs border border-slate-200 space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-lg sm:text-xl font-black text-slate-800 flex items-center gap-2">
+              <i class="fa-solid fa-map-location-dot text-emerald-500"></i> 佳林國中園遊會分區指引
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500">點選分區可直接跳轉至該區域之所有參展班級攤位</p>
+          </div>
+          <button id="adminMapEditBtn" onclick="openMapEditModal()" class="hidden px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold border border-slate-300">
+            <i class="fa-solid fa-pen-to-square"></i> 編輯地圖分區
+          </button>
+        </div>
+        <div id="venueMapContainer" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+      </div>
+    </section>
+
+    <!-- 5. 班級攤位線上報名表 (Registration Tab) -->
+    <section id="registrationTab" class="hidden space-y-5">
+      <div class="bg-white rounded-3xl p-5 sm:p-7 shadow-xs border border-slate-200 space-y-5">
+        <div class="border-b border-slate-100 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h2 class="text-lg sm:text-xl font-black text-slate-800 flex items-center gap-2">
+              <i class="fa-solid fa-file-signature text-rose-500"></i>
+              佳林國中園遊會 - 班級攤位線上報名表（含用電與售價調查）
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1">請各班填寫完整資料並自訂管理密碼 (數字 5 碼)。送出後可即時產出紙本正式確認單列印送交訓育組。</p>
+          </div>
+          <div class="flex items-center gap-2 self-start sm:self-auto">
+            <button id="adminEditRegRulesBtn" type="button" onclick="openRegRulesModal()" class="hidden text-xs sm:text-sm text-purple-700 bg-purple-50 hover:bg-purple-100 px-3 py-1.5 rounded-xl font-bold border border-purple-200">
+              <i class="fa-solid fa-pen-to-square"></i> 管理者編輯說明與標題
+            </button>
+            <button type="button" onclick="loadSampleRegistration()" class="text-xs sm:text-sm text-indigo-600 hover:text-indigo-800 font-bold flex items-center gap-1.5">
+              <i class="fa-regular fa-lightbulb text-amber-500"></i> 代入示範資料
+            </button>
+          </div>
+        </div>
+
+        <!-- 報名時程橫幅 -->
+        <div class="p-3.5 rounded-2xl text-xs sm:text-sm font-bold flex items-center justify-between bg-emerald-50 text-emerald-800 border border-emerald-200">
+          <div class="flex items-center gap-2">
+            <i class="fa-regular fa-calendar-check"></i>
+            <span id="regScheduleStatusText">線上報名開放中：至 2026/10/15 17:00 截止</span>
+          </div>
+          <span class="px-2 py-0.5 rounded-full bg-emerald-200/80 text-emerald-900 text-xs font-mono">雲端就緒</span>
+        </div>
+
+        <!-- 報名規則展示區 -->
+        <div class="space-y-3 bg-slate-50 border border-slate-200 rounded-3xl p-4 sm:p-5 text-xs sm:text-sm">
+          <div class="bg-amber-50/90 border border-amber-200 rounded-2xl p-4 text-amber-950 space-y-1.5">
+            <div class="font-black text-amber-900 flex items-center gap-2 text-sm sm:text-base">
+              <i class="fa-solid fa-triangle-exclamation text-amber-600"></i> ※ 用電申請說明：
+            </div>
+            <div id="displayPowerNotice" class="space-y-1 whitespace-pre-line font-medium text-slate-800"></div>
+          </div>
+          <div class="bg-indigo-50/80 border border-indigo-200 rounded-2xl p-3.5 text-indigo-950 space-y-1 font-semibold">
+            <div class="flex items-center gap-2 font-bold text-indigo-900">
+              <i class="fa-solid fa-circle-info text-indigo-600"></i> ※ 重要設攤注意事項：
+            </div>
+            <div id="displayGeneralNotice" class="space-y-0.5 text-slate-700 whitespace-pre-line"></div>
+          </div>
+        </div>
+
+        <!-- 線上報名表單本體 -->
+        <form id="boothRegistrationForm" onsubmit="handleRegistrationSubmit(event)" class="space-y-5 text-sm sm:text-base">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label class="block font-bold text-slate-700 mb-1.5">班級或設攤單位代碼 <span class="text-rose-500">*</span></label>
+              <input type="text" id="regClassId" required placeholder="例如：705、801、家長會" class="w-full p-3 rounded-2xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-400 outline-none font-bold text-slate-800">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-1.5">攤位名稱 <span class="text-rose-500">*</span></label>
+              <input type="text" id="regBoothName" required placeholder="例如：801 飄香起司炒泡麵" class="w-full p-3 rounded-2xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-400 outline-none">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-1.5">自訂管理密碼 (數字5碼) <span class="text-rose-500">*</span></label>
+              <input type="password" id="regCustomPin" required pattern="[0-9]{5}" maxlength="5" placeholder="請設定 5 碼純數字" class="w-full p-3 rounded-2xl border border-amber-300 bg-amber-50/50 focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none font-mono font-bold tracking-widest text-slate-800">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label class="block font-bold text-slate-700 mb-1.5">攤位類別 <span class="text-rose-500">*</span></label>
+              <select id="regCategory" required class="w-full p-3 rounded-2xl border border-slate-200 bg-slate-50 focus:bg-white font-semibold">
+                <option value="飲食類">飲食類</option>
+                <option value="遊樂類">遊樂類</option>
+                <option value="百貨類">百貨類</option>
+                <option value="其他類">其他類</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-1.5">學生/單位負責人姓名 <span class="text-rose-500">*</span></label>
+              <input type="text" id="regLeader" required placeholder="例如：陳小明" class="w-full p-3 rounded-2xl border border-slate-200 bg-slate-50 focus:bg-white">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-1.5">指導導師 / 顧問姓名 <span class="text-rose-500">*</span></label>
+              <input type="text" id="regTeacher" required placeholder="例如：林老師" class="w-full p-3 rounded-2xl border border-slate-200 bg-slate-50 focus:bg-white">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50/80 p-4 rounded-3xl border border-slate-200">
+            <div>
+              <label class="block font-bold text-slate-700 mb-2">是否需要副導師協助園遊會？ <span class="text-rose-500">*</span></label>
+              <div class="flex items-center gap-6">
+                <label class="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
+                  <input type="radio" name="needAssistantTeacher" value="需要" checked class="w-4 h-4 text-indigo-600">
+                  <span>需要</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
+                  <input type="radio" name="needAssistantTeacher" value="不需要" class="w-4 h-4 text-indigo-600">
+                  <span>不需要</span>
+                </label>
+              </div>
+            </div>
+
+            <div>
+              <label class="block font-bold text-slate-700 mb-2">是否用雙語佈置攤位？ <span class="text-rose-500">*</span></label>
+              <div class="flex items-center gap-6">
+                <label class="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
+                  <input type="radio" name="useBilingual" value="是" class="w-4 h-4 text-indigo-600">
+                  <span>是</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
+                  <input type="radio" name="useBilingual" value="否" checked class="w-4 h-4 text-indigo-600">
+                  <span>否</span>
+                </label>
+              </div>
+              <p id="displayBilingualSubsidyHint" class="text-xs text-emerald-700 font-bold mt-2 bg-emerald-50 px-2.5 py-1 rounded-xl border border-emerald-200 inline-block"></p>
+            </div>
+          </div>
+
+          <!-- 用電調查表模組 -->
+          <div class="bg-amber-50/60 border border-amber-200 rounded-3xl p-4 sm:p-5 space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-amber-200 pb-2">
+              <div>
+                <h3 class="font-extrabold text-amber-900 text-sm sm:text-base flex items-center gap-2">
+                  <i class="fa-solid fa-plug text-amber-600"></i> 【115園遊會用電設備調查表】
+                </h3>
+                <p class="text-xs text-amber-800">每攤位上限 1000 瓦 (W)，嚴禁烹煮類接用學校插座以免跳電。</p>
+              </div>
+              <button type="button" onclick="addPowerDeviceRow()" class="self-start sm:self-auto px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs flex items-center gap-1">
+                <i class="fa-solid fa-plus"></i> 新增用電設備
+              </button>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs sm:text-sm">
+                <thead>
+                  <tr class="text-slate-600 border-b border-amber-200 font-bold">
+                    <th class="py-2 px-2">設備名稱</th>
+                    <th class="py-2 px-2 w-28">瓦數 (W)</th>
+                    <th class="py-2 px-2 w-24">使用台數</th>
+                    <th class="py-2 px-2 w-28 text-right">小計瓦數</th>
+                    <th class="py-2 px-2">規格備註說明</th>
+                    <th class="py-2 px-1 w-12 text-center">操作</th>
+                  </tr>
+                </thead>
+                <tbody id="powerSurveyTableBody"></tbody>
+                <tfoot>
+                  <tr class="font-extrabold text-slate-800 border-t border-amber-300">
+                    <td colspan="3" class="py-2 px-2 text-right">合計總瓦數：</td>
+                    <td id="totalWattsDisplay" class="py-2 px-2 text-right font-mono text-base text-amber-900">0 W</td>
+                    <td colspan="2" id="powerLimitWarning" class="py-2 px-2 text-xs font-bold text-emerald-600">
+                      ✅ 符合 1000W 上限規定
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+
+          <!-- 販售品項調查模組 -->
+          <div class="bg-indigo-50/60 border border-indigo-200 rounded-3xl p-4 sm:p-5 space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-indigo-200 pb-2">
+              <div>
+                <h3 class="font-extrabold text-indigo-900 text-sm sm:text-base flex items-center gap-2">
+                  <i class="fa-solid fa-tags text-indigo-600"></i> 【115園遊會販售商品品項及售價調查表】
+                </h3>
+                <p class="text-xs text-indigo-800">請確實填寫品項名稱與現金售價，將同步於園遊會市集。</p>
+              </div>
+              <button type="button" onclick="addItemPriceRow()" class="self-start sm:self-auto px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-1">
+                <i class="fa-solid fa-plus"></i> 新增販售品項
+              </button>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs sm:text-sm">
+                <thead>
+                  <tr class="text-slate-600 border-b border-indigo-200 font-bold">
+                    <th class="py-2 px-2">販售品項名稱</th>
+                    <th class="py-2 px-2 w-32">定價/售價 (元)</th>
+                    <th class="py-2 px-2">規格/促銷說明</th>
+                    <th class="py-2 px-1 w-12 text-center">操作</th>
+                  </tr>
+                </thead>
+                <tbody id="priceSurveyTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 富文字說明欄位 -->
+          <div class="space-y-2">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <label class="font-bold text-slate-700">攤位補充說明與衛生自主管理承諾事項</label>
+              <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-xs">
+                <button type="button" onclick="execEditorCommand('bold')" class="p-1.5 hover:bg-white rounded font-bold" title="粗體"><b>B</b></button>
+                <button type="button" onclick="execEditorCommand('italic')" class="p-1.5 hover:bg-white rounded italic" title="斜體"><i>I</i></button>
+                <button type="button" onclick="execEditorCommand('underline')" class="p-1.5 hover:bg-white rounded underline" title="底線"><u>U</u></button>
+                <span class="w-px h-4 bg-slate-300 mx-1"></span>
+                <button type="button" onclick="execEditorCommand('insertOrderedList')" class="p-1.5 hover:bg-white rounded font-bold flex items-center gap-1" title="段落數字編號">
+                  <i class="fa-solid fa-list-ol"></i> 數字編號
+                </button>
+                <button type="button" onclick="execEditorCommand('insertUnorderedList')" class="p-1.5 hover:bg-white rounded" title="清單符號">
+                  <i class="fa-solid fa-list-ul"></i>
+                </button>
+                <span class="w-px h-4 bg-slate-300 mx-1"></span>
+                <label class="p-1.5 hover:bg-white rounded cursor-pointer flex items-center gap-1" title="顏色">
+                  <i class="fa-solid fa-palette text-rose-500"></i>
+                  <input type="color" onchange="execEditorCommand('foreColor', this.value)" class="w-4 h-4 opacity-0 absolute">
+                </label>
+              </div>
+            </div>
+            
+            <div id="regDescription" contenteditable="true" placeholder="點擊此處輸入備註說明或衛生承諾（支援粗體、顏色與段落編號）..." class="rich-editor-content w-full min-h-[100px] p-3.5 rounded-2xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-400 outline-none text-sm leading-relaxed"></div>
+          </div>
+
+          <div class="flex flex-col sm:flex-row items-center justify-end gap-3 pt-3 border-t border-slate-100">
+            <button type="button" onclick="clearRegistrationForm()" class="w-full sm:w-auto px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold transition">
+              清空重填
+            </button>
+            <button type="submit" class="w-full sm:w-auto px-7 py-3 rounded-2xl bg-gradient-to-r from-rose-500 to-indigo-600 hover:from-rose-600 hover:to-indigo-700 text-white font-extrabold shadow-md hover:shadow-lg transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-check"></i> 完成線上報名並產生 A4 確認單
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- 6. 後台工作站 (Portal Tab) -->
+    <section id="portalTab" class="hidden space-y-5">
+      <div id="portalNotLoggedIn" class="bg-white rounded-3xl p-8 text-center space-y-4 shadow-xs border border-slate-200">
+        <div class="w-16 h-16 rounded-3xl bg-rose-100 text-rose-600 flex items-center justify-center text-2xl mx-auto">
+          <i class="fa-solid fa-lock"></i>
+        </div>
+        <h2 class="text-xl font-black text-slate-800">請先切換身分登入工作台</h2>
+        <p class="text-sm text-slate-500 max-w-md mx-auto">本區域為班級設攤單位（管理商品、特價資訊）與學務處訓育組（抽籤、帳號、公告管理）專用後台。</p>
+        <button onclick="openRoleModal()" class="px-6 py-2.5 rounded-2xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-sm shadow-md transition">
+          <i class="fa-solid fa-right-to-bracket mr-1.5"></i> 立即登入身分
+        </button>
+      </div>
+
+      <!-- 班級攤位後台 -->
+      <div id="boothAdminPanel" class="hidden space-y-5">
+        <div class="bg-white rounded-3xl p-5 sm:p-6 shadow-xs border border-slate-200 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-4">
+            <div>
+              <span class="px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 font-extrabold text-xs">
+                班級攤位管理端
+              </span>
+              <h2 class="text-xl sm:text-2xl font-black text-slate-800 mt-1" id="currentBoothTitle">班級工作台</h2>
+              <p class="text-xs sm:text-sm text-slate-500" id="currentBoothSubtext"></p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="openItemModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-xs transition flex items-center gap-1.5">
+                <i class="fa-solid fa-plus"></i> 新增菜單品項
+              </button>
+              <button onclick="openDealModal()" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs sm:text-sm font-bold shadow-xs transition flex items-center gap-1.5">
+                <i class="fa-solid fa-bolt"></i> 發布限時特惠 (可上傳照片)
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-extrabold text-slate-800 text-base mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-utensils text-rose-500"></i> 目前商品與現貨狀態
+            </h3>
+            <div id="boothItemsAdminList" class="space-y-2.5"></div>
+          </div>
+
+          <div class="pt-2">
+            <h3 class="font-extrabold text-slate-800 text-base mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-fire text-amber-500"></i> 目前發布的促銷活動
+            </h3>
+            <div id="boothDealsAdminList" class="space-y-2.5"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 學校大會管理者控制台 -->
+      <div id="schoolAdminPanel" class="hidden space-y-5">
+        <div class="bg-white rounded-3xl p-5 sm:p-6 shadow-xs border border-slate-200 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-3">
+            <div>
+              <span class="px-3 py-1 rounded-full bg-rose-100 text-rose-700 font-extrabold text-xs">
+                學務處訓育組 / 大會管理者專用
+              </span>
+              <h2 class="text-xl sm:text-2xl font-black text-slate-800 mt-1">佳林國中園遊會總控制中心</h2>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <button onclick="openNoticePrintSheet()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs sm:text-sm shadow-md flex items-center gap-1.5 transition">
+                <i class="fa-solid fa-print"></i> 列印各班報名須知 (A4)
+              </button>
+              <button onclick="openRegRulesModal()" class="px-3.5 py-2 rounded-xl bg-purple-700 hover:bg-purple-800 text-white font-bold text-xs sm:text-sm shadow-xs flex items-center gap-1.5">
+                <i class="fa-solid fa-clipboard-list"></i> 報名規定與標題文案
+              </button>
+              <button onclick="openAccountManageModal()" class="px-3.5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs sm:text-sm shadow-xs flex items-center gap-1.5">
+                <i class="fa-solid fa-key"></i> 帳號密碼中心
+              </button>
+              <button onclick="openSlotManageModal()" class="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm shadow-xs flex items-center gap-1.5">
+                <i class="fa-solid fa-thumbtack"></i> 攤位編號池設定
+              </button>
+              <button onclick="openScheduleSettingsModal()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs sm:text-sm shadow-xs flex items-center gap-1.5">
+                <i class="fa-solid fa-calendar-days"></i> 報名時程設定
+              </button>
+            </div>
+          </div>
+
+          <!-- 快速數據概況 -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+            <div class="bg-rose-50 p-3.5 rounded-2xl border border-rose-100">
+              <div class="text-xs font-bold text-rose-600">已登記班級</div>
+              <div class="text-xl sm:text-2xl font-black text-rose-900 mt-1" id="statBoothCount">0</div>
+            </div>
+            <div class="bg-amber-50 p-3.5 rounded-2xl border border-amber-100">
+              <div class="text-xs font-bold text-amber-600">規劃總攤位數</div>
+              <div class="text-xl sm:text-2xl font-black text-amber-900 mt-1" id="statTotalSlots">0</div>
+            </div>
+            <div class="bg-indigo-50 p-3.5 rounded-2xl border border-indigo-100">
+              <div class="text-xs font-bold text-indigo-600">已指派位置</div>
+              <div class="text-xl sm:text-2xl font-black text-indigo-900 mt-1" id="statAssignedSlots">0</div>
+            </div>
+            <div class="bg-emerald-50 p-3.5 rounded-2xl border border-emerald-100">
+              <div class="text-xs font-bold text-emerald-600">空餘籤池編號</div>
+              <div class="text-xl sm:text-2xl font-black text-emerald-900 mt-1" id="statUnassignedSlots">0</div>
+            </div>
+          </div>
+
+          <!-- 訓育組位置抽籤模組 -->
+          <div class="border-2 border-indigo-300 bg-indigo-50/40 rounded-3xl p-4 sm:p-5 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-indigo-200 pb-3">
+              <div>
+                <h3 class="font-black text-indigo-950 text-base sm:text-lg flex items-center gap-2">
+                  <i class="fa-solid fa-dice text-indigo-600 text-xl"></i>
+                  訓育組 - 園遊會攤位位置公正抽籤系統
+                </h3>
+                <p class="text-xs sm:text-sm text-indigo-800">隨機抽取可用攤位編號，支援單班輪盤抽取與一鍵公正隨機分發。</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="autoAssignAllSlots()" class="px-3.5 py-2 rounded-xl bg-indigo-700 hover:bg-indigo-800 text-white font-bold text-xs sm:text-sm shadow-xs flex items-center gap-1.5 transition">
+                  <i class="fa-solid fa-shuffle"></i> 一鍵全數隨機公正分發
+                </button>
+                <button type="button" onclick="exportLotteryCSV()" class="px-3 py-2 rounded-xl bg-white hover:bg-slate-100 text-indigo-900 border border-indigo-300 font-bold text-xs sm:text-sm shadow-xs flex items-center gap-1">
+                  <i class="fa-solid fa-file-csv text-emerald-600"></i> 匯出名冊
+                </button>
+              </div>
+            </div>
+
+            <!-- 單班動態輪盤抽取 -->
+            <div class="bg-white rounded-2xl p-4 border border-indigo-100 flex flex-col sm:flex-row items-center gap-4">
+              <div class="flex-1 w-full space-y-1">
+                <label class="font-bold text-slate-700 text-xs sm:text-sm block">選擇待抽籤之班級/單位：</label>
+                <select id="lotteryClassSelect" class="w-full p-2.5 rounded-xl border border-slate-300 font-bold text-sm bg-slate-50 focus:bg-white"></select>
+              </div>
+
+              <div class="w-full sm:w-44 h-16 rounded-2xl bg-gradient-to-r from-indigo-900 to-slate-900 text-white flex items-center justify-center font-mono font-black text-2xl tracking-widest border-2 border-indigo-400 shadow-inner">
+                <span id="lotteryRollingSlotDisplay">---</span>
+              </div>
+
+              <button type="button" id="startSingleDrawBtn" onclick="startSingleDraw()" class="w-full sm:w-auto px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white font-black text-sm shadow-md transition whitespace-nowrap">
+                <i class="fa-solid fa-play mr-1"></i> 開始單班抽籤
+              </button>
+            </div>
+
+            <div class="space-y-2">
+              <div class="flex items-center justify-between text-xs font-bold text-indigo-900">
+                <span>各班目前抽籤分配結果一覽：</span>
+                <span id="lotteryRemainingSlotsText">籤池剩餘可用號碼：0 個</span>
+              </div>
+              <div id="lotteryResultsTable" class="max-h-60 overflow-y-auto bg-white rounded-2xl border border-slate-200"></div>
+            </div>
+          </div>
+
+          <!-- 全校已登記攤位總覽 -->
+          <div>
+            <h3 class="font-extrabold text-slate-800 text-base mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-indigo-600"></i> 全校攤位一覽（點擊可直接進入維護）
+            </h3>
+            <div id="adminBoothsList" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 正式 A4 列印確認單 -->
+  <div id="printSheetArea" class="hidden max-w-6xl mx-auto my-6 px-3 sm:px-4">
+    <!-- 單一整合控制橫幅 -->
+    <div class="no-print bg-emerald-50 border-2 border-emerald-400 rounded-3xl p-4 sm:p-5 mb-5 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md">
+      <div class="flex items-center gap-3 text-emerald-900 font-extrabold text-sm sm:text-base">
+        <i class="fa-solid fa-circle-check text-emerald-600 text-2xl shrink-0"></i>
+        <span>線上資料已成功帶入！請點擊右方按鈕進行單張 A4 正式列印送審。</span>
+      </div>
+      <button onclick="window.print()" class="w-full sm:w-auto px-7 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-black flex items-center justify-center gap-2 shadow-lg transition text-base shrink-0">
+        <i class="fa-solid fa-print"></i> 列印正式確認單 (A4)
+      </button>
+    </div>
+
+    <!-- 紙本單據實體卡片 -->
+    <div class="bg-white text-slate-900 border-2 border-slate-900 rounded-3xl p-6 sm:p-10 shadow-2xl print:border-none print:shadow-none print:p-0">
+      <div class="text-center space-y-2 mb-4">
+        <h2 id="printSheetMainTitle" class="text-2xl sm:text-3xl font-black tracking-wide text-slate-900">新北市立佳林國民中學 115學年度 校慶園遊會</h2>
+        <h3 class="text-lg sm:text-xl font-bold tracking-wide text-slate-800">班級設攤申請、用電調查與售價確認單</h3>
+        <div class="flex justify-between items-center text-xs sm:text-sm text-slate-600 pt-1 font-mono">
+          <span id="printSerialNo" class="font-bold">正式單號：JL-115-AUTO</span>
+          <span id="printSubmitTime">填報時間：2026/10/06</span>
+        </div>
+      </div>
+
+      <table class="w-full border-collapse border-2 border-slate-900 text-left text-xs sm:text-sm">
+        <tbody>
+          <tr>
+            <td class="border border-slate-800 py-2.5 px-3 font-bold bg-slate-100 whitespace-nowrap w-36">參展班級/單位</td>
+            <td class="border border-slate-800 py-2.5 px-3 font-black text-base" id="pClassId">--</td>
+            <td class="border border-slate-800 py-2.5 px-3 font-bold bg-slate-100 whitespace-nowrap w-32">攤位類別</td>
+            <td class="border border-slate-800 py-2.5 px-3 font-bold" id="pCategory">--</td>
+          </tr>
+          <tr>
+            <td class="border border-slate-800 py-2.5 px-3 font-bold bg-slate-100 whitespace-nowrap">攤位名稱</td>
+            <td colspan="3" class="border border-slate-800 py-2.5 px-3 font-bold text-base" id="pBoothName">--</td>
+          </tr>
+          <tr>
+            <td class="border border-slate-800 py-2.5 px-3 font-bold bg-slate-100 whitespace-nowrap">學生/單位負責人</td>
+            <td class="border border-slate-800 py-2.5 px-3" id="pLeader">--</td>
+            <td class="border border-slate-800 py-2.5 px-3 font-bold bg-slate-100 whitespace-nowrap">指導導師/顧問</td>
+            <td class="border border-slate-800 py-2.5 px-3" id="pTeacher">--</td>
+          </tr>
+          <tr>
+            <td class="border border-slate-800 py-2.5 px-3 font-bold bg-slate-100 whitespace-nowrap">副導師協助需求</td>
+            <td class="border border-slate-800 py-2.5 px-3 font-bold" id="pAssistant">--</td>
+            <td class="border border-slate-800 py-2.5 px-3 font-bold bg-slate-100 whitespace-nowrap">雙語佈置申請</td>
+            <td class="border border-slate-800 py-2.5 px-3 font-bold text-emerald-800" id="pBilingual">--</td>
+          </tr>
+          <tr>
+            <td class="border border-slate-800 py-2.5 px-3 font-bold bg-slate-100 whitespace-nowrap align-top">用電設備彙整</td>
+            <td colspan="3" class="border border-slate-800 p-2" id="pPowerSummaryTable"></td>
+          </tr>
+          <tr>
+            <td class="border border-slate-800 py-2.5 px-3 font-bold bg-slate-100 whitespace-nowrap align-top">品項與售價定價</td>
+            <td colspan="3" class="border border-slate-800 p-2" id="pPriceSummaryTable"></td>
+          </tr>
+          <tr>
+            <td class="border border-slate-800 py-2.5 px-3 font-bold bg-slate-100 whitespace-nowrap align-top">說明與衛生承諾</td>
+            <td colspan="3" class="border border-slate-800 py-2.5 px-3 leading-relaxed" id="pDescription"></td>
+          </tr>
+          <tr>
+            <td class="border border-slate-800 py-2.5 px-3 font-bold bg-slate-100 whitespace-nowrap align-top">設攤與用電須知</td>
+            <td colspan="3" id="printNoticesCell" class="border border-slate-800 py-2 px-3 leading-snug space-y-1.5 text-[11px] sm:text-xs">
+              <div class="font-bold text-slate-900">※【用電申請規範重點】</div>
+              <div id="printPowerNoticeCompact" class="text-slate-800 pl-1 font-medium"></div>
+              <div class="font-bold text-slate-900 pt-1 border-t border-slate-300">※【重要設攤注意事項與雙語補助】</div>
+              <div id="printGeneralNoticeCompact" class="text-slate-800 pl-1 font-medium"></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- 簽名核章欄 -->
+      <div class="pt-4">
+        <div class="text-xs sm:text-sm font-black mb-1.5 text-slate-900">【班級確認與學校簽核欄】（本單印出核章後請於截止日前繳交至學務處訓育組）</div>
+        <table class="w-full border-collapse border-2 border-slate-900 text-center text-xs sm:text-sm">
+          <thead>
+            <tr class="bg-slate-100">
+              <th class="border border-slate-800 py-1.5 px-1 w-1/5">學生負責人簽章</th>
+              <th class="border border-slate-800 py-1.5 px-1 w-1/5">指導導師核章</th>
+              <th class="border border-slate-800 py-1.5 px-1 w-1/5">學務處訓育組</th>
+              <th class="border border-slate-800 py-1.5 px-1 w-1/5">總務處用電審查</th>
+              <th class="border border-slate-800 py-1.5 px-1 w-1/5">學務主任決行</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="h-28">
+              <td class="border border-slate-800 align-bottom pb-2 text-slate-400 font-bold">（簽名）</td>
+              <td class="border border-slate-800 align-bottom pb-2 text-slate-400 font-bold">（簽名蓋章）</td>
+              <td class="border border-slate-800 align-bottom pb-2 text-slate-400 font-bold">（核章）</td>
+              <td class="border border-slate-800 align-bottom pb-2 text-slate-400 font-bold">（安全確認）</td>
+              <td class="border border-slate-800 align-bottom pb-2 text-slate-400 font-bold">（決行）</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 訓育組專用：發放各班報名須知與操作說明通知單 (A4 滿版) -->
+  <div id="printNoticeArea" class="hidden max-w-6xl mx-auto my-6 px-3 sm:px-4">
+    <div class="no-print bg-emerald-50 border-2 border-emerald-400 rounded-3xl p-4 sm:p-5 mb-5 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md">
+      <div class="flex items-center gap-3 text-emerald-900 font-extrabold text-sm sm:text-base">
+        <i class="fa-solid fa-bullhorn text-emerald-600 text-2xl shrink-0"></i>
+        <span>訓育組公告單據預覽：請點擊右方按鈕列印 A4 紙本，可大量影印發送給七、八、九年級各班導師！</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="closeNoticeSheet()" class="px-5 py-2.5 rounded-2xl bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-sm">
+          關閉預覽
+        </button>
+        <button onclick="window.print()" class="px-7 py-2.5 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white font-black text-sm shadow-md flex items-center gap-2">
+          <i class="fa-solid fa-print"></i> 列印通知單 (A4)
+        </button>
+      </div>
+    </div>
+
+    <!-- 通知單實體本體 -->
+    <div class="notice-sheet-container bg-white text-slate-900 border-2 border-slate-900 rounded-3xl p-6 sm:p-8 shadow-2xl print:border-none print:shadow-none print:p-0">
+      <div class="notice-header text-center space-y-1 mb-4 border-b-2 border-slate-900 pb-3">
+        <h2 id="noticeSheetMainTitle" class="notice-main-title text-2xl sm:text-3xl font-black text-slate-900">新北市立佳林國民中學 115學年度 校慶園遊會</h2>
+        <h3 class="notice-sub-title text-lg sm:text-xl font-extrabold text-indigo-950">各班設攤線上報名須知、用電規範與操作指引</h3>
+        <p class="notice-meta-text text-xs text-slate-600 font-mono">發布單位：學務處訓育組 ｜ 受文對象：七、八、九年級各班導師與設攤負責同學</p>
+      </div>
+
+      <div class="notice-body space-y-4 text-xs sm:text-sm text-slate-800 leading-relaxed">
+        <div class="notice-sheet-card border border-slate-800 rounded-2xl p-4 bg-slate-50 space-y-2">
+          <div class="notice-block-title font-black text-slate-900 text-sm sm:text-base flex items-center gap-2">
+            <span class="w-6 h-6 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs">1</span>
+            線上系統報名操作流程指引：
+          </div>
+          <div id="noticeSheetStepsText" class="pl-2 space-y-1 font-medium whitespace-pre-line text-slate-800 text-xs sm:text-sm"></div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 print:grid-cols-2">
+          <div class="notice-sheet-card border border-slate-800 rounded-2xl p-3.5 space-y-1.5 bg-amber-50/50">
+            <div class="notice-block-title font-black text-amber-950 text-sm">※【園遊會用電重要安全管制】</div>
+            <div id="noticeSheetPowerText" class="text-xs text-slate-800 space-y-1 whitespace-pre-line font-medium"></div>
+          </div>
+
+          <div class="notice-sheet-card border border-slate-800 rounded-2xl p-3.5 space-y-1.5 bg-indigo-50/50">
+            <div class="notice-block-title font-black text-indigo-950 text-sm">※【設攤規定與雙語佈置補助】</div>
+            <div id="noticeSheetGeneralText" class="text-xs text-slate-800 space-y-1 whitespace-pre-line font-medium"></div>
+            <div class="pt-2 border-t border-slate-300 font-bold text-emerald-800 text-xs print:text-[11pt]">
+              💰 <span id="noticeSheetSubsidyText"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="notice-sheet-card border border-slate-800 rounded-2xl p-3.5 space-y-2 bg-slate-50">
+          <div class="notice-block-title font-black text-slate-900 text-sm flex items-center gap-2">
+            <span class="w-6 h-6 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs">2</span>
+            紙本繳交截止時程與位置抽籤叮嚀：
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-medium print:grid-cols-2">
+            <div class="notice-deadline-box bg-white p-2.5 rounded-xl border border-slate-300">
+              <span class="font-bold text-rose-700">● 報名截止期限：</span>
+              <span id="noticeSheetDeadlineText" class="font-bold font-mono">2026-10-15 17:00 截止</span>
+            </div>
+            <div class="notice-deadline-box bg-white p-2.5 rounded-xl border border-slate-300">
+              <span class="font-bold text-indigo-700">● 紙本繳交地點：</span>
+              <span>學務處訓育組 (需完成導師簽核)</span>
+            </div>
+          </div>
+          <p class="text-xs text-slate-600 mt-2 print:text-[10.5pt] print:leading-relaxed">※ 各班攤位位置抽籤將於報名截止後，由學務處訓育組統一於線上後台系統進行公正隨機抽籤分發，敬請各班導師與同學把握時程！</p>
+        </div>
+      </div>
+
+      <div class="notice-footer mt-5 pt-3 border-t-2 border-slate-900 flex items-center justify-between text-xs text-slate-600 font-bold">
+        <span>學務處訓育組 敬啟</span>
+        <span id="noticeSheetFooterSchool" class="font-mono">新北市立佳林國民中學 115學年度校慶大會公佈</span>
+        <span>班級簽收存查：＿＿＿＿＿＿</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 手機底部導覽列 -->
+  <nav id="bottomNavBar" class="no-print sm:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 px-2 py-1.5 z-40 flex items-center justify-around shadow-lg">
+    <button onclick="switchTab('stallsTab')" id="mobile-tab-stallsTab" class="flex flex-col items-center gap-0.5 text-rose-600 font-bold text-[11px] p-1">
+      <i class="fa-solid fa-store text-lg"></i>
+      <span>逛攤位</span>
+    </button>
+    <button onclick="switchTab('dealsTab')" id="mobile-tab-dealsTab" class="flex flex-col items-center gap-0.5 text-slate-500 font-bold text-[11px] p-1">
+      <i class="fa-solid fa-fire text-lg text-amber-500"></i>
+      <span>特價快訊</span>
+    </button>
+    <button onclick="switchTab('announcementsTab')" id="mobile-tab-announcementsTab" class="flex flex-col items-center gap-0.5 text-slate-500 font-bold text-[11px] p-1">
+      <i class="fa-solid fa-bullhorn text-lg"></i>
+      <span>大會公告</span>
+    </button>
+    <button onclick="switchTab('mapTab')" id="mobile-tab-mapTab" class="flex flex-col items-center gap-0.5 text-slate-500 font-bold text-[11px] p-1">
+      <i class="fa-solid fa-map text-lg"></i>
+      <span>分區地圖</span>
+    </button>
+    <button onclick="switchTab('registrationTab')" id="mobile-tab-registrationTab" class="flex flex-col items-center gap-0.5 text-slate-500 font-bold text-[11px] p-1">
+      <i class="fa-solid fa-file-pen text-lg text-purple-600"></i>
+      <span>報名表</span>
+    </button>
+    <button onclick="switchTab('portalTab')" id="mobile-tab-portalTab" class="flex flex-col items-center gap-0.5 text-slate-500 font-bold text-[11px] p-1">
+      <i class="fa-solid fa-sliders text-lg text-indigo-600"></i>
+      <span id="mobilePortalTabName">工作台</span>
+    </button>
+  </nav>
+
+  <!-- 1. 身分切換 Modal -->
+  <div id="roleModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="font-extrabold text-slate-800 text-lg flex items-center gap-2">
+          <i class="fa-solid fa-user-lock text-rose-500"></i> 身分切換與登入
+        </h3>
+        <button onclick="closeModal('roleModal')" class="text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <button onclick="setRole('visitor')" class="w-full text-left p-3.5 rounded-2xl border-2 border-slate-200 hover:border-rose-400 font-bold flex items-center gap-3 transition">
+          <span class="p-2 rounded-xl bg-slate-100 text-slate-700 text-lg"><i class="fa-solid fa-user"></i></span>
+          <div>
+            <div class="text-slate-900">訪客模式（一般瀏覽）</div>
+            <div class="text-xs text-slate-400 font-normal">適合學生、家長、來賓瀏覽攤位與特價</div>
+          </div>
+        </button>
+
+        <div class="p-3.5 rounded-2xl border-2 border-slate-200 space-y-2.5">
+          <div class="font-bold text-slate-900 flex items-center gap-2">
+            <span class="p-2 rounded-xl bg-indigo-100 text-indigo-700"><i class="fa-solid fa-store"></i></span>
+            <span>班級攤位端登入</span>
+          </div>
+          <select id="loginBoothSelect" class="w-full p-2.5 rounded-xl border border-slate-200 text-sm font-semibold"></select>
+          <input type="password" id="boothPinInput" placeholder="請輸入 5 碼管理密碼" class="w-full p-2.5 rounded-xl border border-slate-200 text-sm font-mono tracking-widest">
+          <button onclick="loginAsBooth()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-sm shadow-xs transition">
+            登入班級工作台
+          </button>
+        </div>
+
+        <div class="p-3.5 rounded-2xl border-2 border-slate-200 space-y-2.5">
+          <div class="font-bold text-slate-900 flex items-center gap-2">
+            <span class="p-2 rounded-xl bg-rose-100 text-rose-700"><i class="fa-solid fa-shield-halved"></i></span>
+            <span>學務處訓育組 / 大會管理者</span>
+          </div>
+          <input type="password" id="adminPasswordInput" placeholder="請輸入管理者通行密碼" class="w-full p-2.5 rounded-xl border border-slate-200 text-sm font-mono">
+          <button onclick="loginAsAdmin()" class="w-full py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold text-sm shadow-xs transition">
+            以大會管理員身分登入
+          </button>
+        </div>
+
+        <div class="pt-2 border-t border-slate-100">
+          <button onclick="handleLogout()" class="w-full py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i> 登出並清除密碼記錄
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. 帳號與密碼管理中心 (CRUD) Modal -->
+  <div id="accountManageModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-white w-full max-w-3xl rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4 my-auto">
+      <div class="flex items-center justify-between border-b pb-3">
+        <div>
+          <h3 class="font-extrabold text-slate-800 text-lg flex items-center gap-2">
+            <i class="fa-solid fa-users-gear text-teal-600"></i> 攤位帳號與密碼管理中心
+          </h3>
+          <p class="text-xs text-slate-500">管理者可檢視、修改各班 5 碼密碼、新增特殊單位或刪除無效帳號</p>
+        </div>
+        <button onclick="closeModal('accountManageModal')" class="text-slate-400 hover:text-slate-600 text-lg">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2.5 text-xs sm:text-sm">
+        <div class="font-bold text-slate-700 flex items-center gap-1.5">
+          <i class="fa-solid fa-user-plus text-teal-600"></i>
+          <span id="accFormModeTitle">快速新增設攤單位帳號</span>
+        </div>
+        <input type="hidden" id="accEditBoothId" value="">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <input type="text" id="accClassIdInput" placeholder="班級代碼 (如 706)" class="p-2.5 rounded-xl border border-slate-200 font-bold">
+          <input type="text" id="accBoothNameInput" placeholder="攤位名稱" class="p-2.5 rounded-xl border border-slate-200">
+          <input type="text" id="accLeaderInput" placeholder="負責人" class="p-2.5 rounded-xl border border-slate-200">
+          <input type="password" id="accPinInput" maxlength="5" placeholder="5碼數字密碼" class="p-2.5 rounded-xl border border-slate-200 font-mono font-bold">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <select id="accCategoryInput" class="w-full p-2.5 rounded-xl border border-slate-200 font-semibold">
+            <option value="飲食類">飲食類</option>
+            <option value="遊樂類">遊樂類</option>
+            <option value="百貨類">百貨類</option>
+            <option value="其他類">其他類</option>
+          </select>
+          <input type="text" id="accLocationInput" placeholder="攤位編號例：A-03 (可填待抽籤)" class="w-full p-2.5 rounded-xl border border-slate-200 font-mono">
+        </div>
+        <div class="flex justify-end gap-2 pt-1">
+          <button type="button" onclick="resetAccForm()" class="px-3 py-1.5 rounded-xl bg-slate-200 text-slate-600 font-bold">取消</button>
+          <button type="button" onclick="handleSaveBoothAccount()" class="px-4 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold">儲存帳號</button>
+        </div>
+      </div>
+
+      <div class="max-h-64 overflow-y-auto border border-slate-200 rounded-2xl">
+        <table class="w-full text-left text-xs sm:text-sm">
+          <thead class="bg-slate-100 sticky top-0 font-bold text-slate-700">
+            <tr>
+              <th class="p-2.5">班級/單位</th>
+              <th class="p-2.5">攤位名稱</th>
+              <th class="p-2.5">位置</th>
+              <th class="p-2.5">5碼密碼</th>
+              <th class="p-2.5 text-center">操作</th>
+            </tr>
+          </thead>
+          <tbody id="accountManageTableBody" class="divide-y divide-slate-100 font-medium"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. 管理者編輯說明與標題 Modal -->
+  <div id="regRulesModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-white w-full max-w-2xl rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4 my-auto text-xs sm:text-sm">
+      <div class="flex items-center justify-between border-b pb-3">
+        <div class="flex items-center gap-2">
+          <span class="p-2.5 rounded-xl bg-purple-100 text-purple-800 text-lg"><i class="fa-solid fa-pen-to-square"></i></span>
+          <h3 class="font-extrabold text-slate-800 text-base sm:text-lg">編輯活動標題、報名規範與補助文案</h3>
+        </div>
+        <button onclick="closeModal('regRulesModal')" class="text-slate-400 hover:text-slate-600 text-lg">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3.5">
+        <div class="bg-purple-50/70 p-3.5 rounded-2xl border border-purple-200 space-y-2.5">
+          <div class="font-black text-purple-900 text-xs sm:text-sm flex items-center gap-1.5">
+            <i class="fa-solid fa-heading"></i> 活動標題與名稱自訂設定
+          </div>
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">學校大會全名 (主標題，連動 A4 正式確認單與通知單)</label>
+            <input type="text" id="editMainTitleInput" class="w-full p-2.5 rounded-xl border border-purple-300 font-bold text-slate-900 bg-white">
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div>
+              <label class="font-bold text-slate-700 block mb-1">系統簡稱 (導覽列標題)</label>
+              <input type="text" id="editAppTitleInput" class="w-full p-2 rounded-xl border border-purple-200 font-bold bg-white">
+            </div>
+            <div>
+              <label class="font-bold text-slate-700 block mb-1">系統副標題</label>
+              <input type="text" id="editAppSubtitleInput" class="w-full p-2 rounded-xl border border-purple-200 bg-white">
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="font-bold text-slate-700 block">線上系統報名操作流程指引</label>
+            <button type="button" onclick="resetDefaultOperationSteps()" class="text-xs text-indigo-600 hover:text-indigo-800 font-bold">
+              <i class="fa-solid fa-rotate-left"></i> 載入預設流程
+            </button>
+          </div>
+          <textarea id="editOperationStepsInput" rows="5" class="w-full p-3 rounded-2xl border border-slate-300 font-medium leading-relaxed"></textarea>
+        </div>
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">※ 用電申請說明文字</label>
+          <textarea id="editPowerNoticeInput" rows="4" class="w-full p-3 rounded-2xl border border-slate-300 font-medium leading-relaxed"></textarea>
+        </div>
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">※ 重要設攤注意事項</label>
+          <textarea id="editGeneralNoticeInput" rows="3" class="w-full p-3 rounded-2xl border border-slate-300 font-medium leading-relaxed"></textarea>
+        </div>
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">雙語佈置攤位補助文字說明</label>
+          <input type="text" id="editBilingualSubsidyInput" class="w-full p-2.5 rounded-xl border border-slate-300 font-bold text-emerald-800">
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+        <button type="button" onclick="resetDefaultRegRules()" class="text-rose-500 hover:text-rose-700 font-bold">恢復全域預設</button>
+        <div class="flex items-center gap-2">
+          <button onclick="closeModal('regRulesModal')" class="px-4 py-2 rounded-xl bg-slate-100 font-bold text-slate-600">取消</button>
+          <button onclick="saveRegRulesSettings()" class="px-5 py-2 rounded-xl bg-purple-700 hover:bg-purple-800 text-white font-bold shadow-xs">儲存同步</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. 攤位編號池管理 Modal -->
+  <div id="slotManageModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-white w-full max-w-2xl rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4 my-auto">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="font-extrabold text-slate-800 text-lg flex items-center gap-2">
+          <i class="fa-solid fa-thumbtack text-blue-600"></i> 全校攤位編號池管理
+        </h3>
+        <button onclick="closeModal('slotManageModal')" class="text-slate-400 hover:text-slate-600 text-lg">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="bg-blue-50 p-3.5 rounded-2xl border border-blue-200 text-xs sm:text-sm space-y-2">
+        <div class="font-bold text-blue-900">一鍵批次新增分區編號：</div>
+        <div class="flex items-center gap-2">
+          <select id="slotBatchPrefix" class="p-2 rounded-xl border border-blue-200 font-bold">
+            <option value="A">A 區 (操場)</option>
+            <option value="B">B 區 (球場)</option>
+            <option value="C">C 區 (川堂)</option>
+            <option value="D">D 區 (體育館)</option>
+          </select>
+          <span>從</span>
+          <input type="number" id="slotBatchFrom" value="1" min="1" max="99" class="w-16 p-2 rounded-xl border border-blue-200 font-bold text-center">
+          <span>至</span>
+          <input type="number" id="slotBatchTo" value="10" min="1" max="99" class="w-16 p-2 rounded-xl border border-blue-200 font-bold text-center">
+          <button onclick="handleBatchGenerateSlots()" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold ml-auto">批次產生</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="text-xs font-bold text-slate-500 mb-2">現存所有攤位編號：</div>
+        <div id="modalSlotTagsList" class="flex flex-wrap gap-2 max-h-56 overflow-y-auto p-2 bg-slate-50 rounded-2xl border border-slate-200"></div>
+      </div>
+
+      <div class="flex justify-end pt-2 border-t">
+        <button onclick="closeModal('slotManageModal')" class="px-5 py-2 bg-slate-800 text-white rounded-xl font-bold text-sm">完成</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. 報名時程管制 Modal -->
+  <div id="scheduleSettingsModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="font-extrabold text-slate-800 text-lg flex items-center gap-2">
+          <i class="fa-solid fa-clock text-slate-700"></i> 線上報名時程管制設定
+        </h3>
+        <button onclick="closeModal('scheduleSettingsModal')" class="text-slate-400 hover:text-slate-600 text-lg">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="space-y-3 text-sm">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">報名開始時間</label>
+          <input type="datetime-local" id="schedRegStartInput" class="w-full p-2.5 rounded-xl border border-slate-300 font-bold">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">報名截止時間</label>
+          <input type="datetime-local" id="schedRegEndInput" class="w-full p-2.5 rounded-xl border border-slate-300 font-bold">
+        </div>
+        <p class="text-xs text-slate-500">※ 訓育組位置抽籤無時間限制，隨時可於後台執行。</p>
+      </div>
+      <div class="flex justify-end gap-2 pt-2 border-t">
+        <button onclick="closeModal('scheduleSettingsModal')" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl font-bold">取消</button>
+        <button onclick="saveScheduleSettings()" class="px-5 py-2 bg-slate-900 text-white rounded-xl font-bold">儲存時程</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. 新增商品 Modal -->
+  <div id="itemModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="font-extrabold text-slate-800 text-lg flex items-center gap-2">
+          <i class="fa-solid fa-utensils text-indigo-600"></i> 新增/編輯攤位販售項目
+        </h3>
+        <button onclick="closeModal('itemModal')" class="text-slate-400 hover:text-slate-600 text-lg">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <form onsubmit="handleSaveItem(event)" class="space-y-3 text-sm">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">商品名稱 <span class="text-rose-500">*</span></label>
+          <input type="text" id="modalItemName" required placeholder="如：起司熔岩炒泡麵" class="w-full p-2.5 rounded-xl border border-slate-300 font-bold">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">單價 (元) <span class="text-rose-500">*</span></label>
+          <input type="number" id="modalItemPrice" required min="0" placeholder="如：60" class="w-full p-2.5 rounded-xl border border-slate-300 font-mono font-bold">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">狀態</label>
+          <select id="modalItemStatus" class="w-full p-2.5 rounded-xl border border-slate-300 font-bold">
+            <option value="熱賣中">熱賣中</option>
+            <option value="最後限量">最後限量</option>
+            <option value="已完售">已完售</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">備註說明</label>
+          <input type="text" id="modalItemNote" placeholder="如：加蛋+10元" class="w-full p-2.5 rounded-xl border border-slate-300">
+        </div>
+        <div class="flex justify-end gap-2 pt-2 border-t">
+          <button type="button" onclick="closeModal('itemModal')" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl font-bold">取消</button>
+          <button type="submit" class="px-5 py-2 bg-indigo-600 text-white rounded-xl font-bold">儲存商品</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 7. 限時特賣 Modal (支援本機上傳圖片 + Canvas 壓縮) -->
+  <div id="dealModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-white w-full max-w-md rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4 my-auto">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="font-extrabold text-slate-800 text-lg flex items-center gap-2">
+          <i class="fa-solid fa-bolt text-amber-500"></i> 發布限時特價快訊
+        </h3>
+        <button onclick="closeModal('dealModal')" class="text-slate-400 hover:text-slate-600 text-lg">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <form onsubmit="handleSaveDeal(event)" class="space-y-3 text-sm">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">促銷標題 <span class="text-rose-500">*</span></label>
+          <input type="text" id="dealTitleInput" required placeholder="如：第二杯半價！黑糖鮮奶只要 25 元" class="w-full p-2.5 rounded-xl border border-slate-300 font-bold">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">原價 (元)</label>
+            <input type="number" id="dealOrigPriceInput" min="0" placeholder="如：50" class="w-full p-2.5 rounded-xl border border-slate-300 font-mono">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">特價 (元) <span class="text-rose-500">*</span></label>
+            <input type="number" id="dealPromoPriceInput" required min="0" placeholder="如：25" class="w-full p-2.5 rounded-xl border border-rose-300 font-mono font-bold text-rose-600">
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">特價說明內容</label>
+          <textarea id="dealDescInput" rows="2" placeholder="如：出示畫面即可折抵，限量50份！" class="w-full p-2.5 rounded-xl border border-slate-300"></textarea>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">宣傳照片 (支援手機拍照上傳，自動壓縮)</label>
+          <input type="file" id="dealImageFileInput" accept="image/*" onchange="handleDealImageSelect(event)" class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-amber-100 file:text-amber-800">
+          <input type="url" id="dealImageUrlInput" placeholder="或貼上公開圖片網址" class="w-full p-2 rounded-xl border border-slate-300 text-xs mt-1.5">
+          <div id="dealImagePreviewBox" class="hidden mt-2 w-full h-32 rounded-xl overflow-hidden bg-slate-100 border">
+            <img id="dealImagePreviewImg" src="" alt="預覽" class="w-full h-full object-cover">
+          </div>
+        </div>
+        <div class="flex justify-end gap-2 pt-2 border-t">
+          <button type="button" onclick="closeModal('dealModal')" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl font-bold">取消</button>
+          <button type="submit" class="px-5 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold">發布特賣</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 8. 公告 Modal -->
+  <div id="announcementModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="font-extrabold text-slate-800 text-lg flex items-center gap-2">
+          <i class="fa-solid fa-bullhorn text-indigo-600"></i>
+          <span id="annModalTitle">發布大會公告</span>
+        </h3>
+        <button onclick="closeModal('announcementModal')" class="text-slate-400 hover:text-slate-600 text-lg">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <form onsubmit="handleSaveAnnouncement(event)" class="space-y-3 text-sm">
+        <input type="hidden" id="editAnnouncementId" value="">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">公告標題 <span class="text-rose-500">*</span></label>
+          <input type="text" id="annTitleInput" required class="w-full p-2.5 rounded-xl border border-slate-300 font-bold">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">廣播內容 <span class="text-rose-500">*</span></label>
+          <textarea id="annContentInput" required rows="3" class="w-full p-2.5 rounded-xl border border-slate-300"></textarea>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" id="annIsUrgentInput" class="w-4 h-4 text-rose-600 rounded">
+          <label for="annIsUrgentInput" class="font-bold text-rose-700 text-xs sm:text-sm">設為頂部緊急跑馬燈</label>
+        </div>
+        <div class="flex justify-end gap-2 pt-2 border-t">
+          <button type="button" onclick="closeModal('announcementModal')" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl font-bold">取消</button>
+          <button type="submit" class="px-5 py-2 bg-indigo-600 text-white rounded-xl font-bold">發布</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 9. Google Apps Script 雲端試算表設定 Modal -->
+  <div id="gasModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-white w-full max-w-xl rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4 my-auto text-xs sm:text-sm">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="font-extrabold text-slate-800 text-base sm:text-lg flex items-center gap-2">
+          <i class="fa-solid fa-cloud text-indigo-600"></i> Google 雲端試算表 (GAS) 部署與同步
+        </h3>
+        <button onclick="closeModal('gasModal')" class="text-slate-400 hover:text-slate-600 text-lg">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">Web 應用程式網址 (Web App URL)：</label>
+          <input type="url" id="gasAppUrlInput" placeholder="https://script.google.com/macros/s/AKfycb.../exec" class="w-full p-2.5 rounded-xl border border-slate-300 font-mono text-xs">
+          <span class="text-xs text-slate-500 mt-1 block">若留空，系統將自動以本機 LocalStorage 安全存檔。</span>
+        </div>
+
+        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-3.5 space-y-1.5 text-xs text-amber-950">
+          <div class="font-bold text-amber-900 flex items-center gap-1.5">
+            <i class="fa-solid fa-graduation-cap text-amber-700"></i>
+            <span>教育帳號 (@ntpc.edu.tw / G Suite) 部署關鍵提醒：</span>
+          </div>
+          <p>1. 在 Google 試算表點選【擴充功能】→【Apps Script】，貼上下方專用程式碼並存檔。</p>
+          <p>2. 點擊右上角【部署】→【新增部署】，種類選取【網頁應用程式】。</p>
+          <p class="font-black text-rose-700">3. 【執行身分】請選「我」；【誰可以存取】必須切換為「所有人 (Anyone)」，不可僅限機構內部，才能讓班級學生手機免登入回傳！</p>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap justify-between items-center gap-2 pt-2 border-t">
+        <button type="button" onclick="copyGasCode()" class="text-indigo-600 hover:text-indigo-800 font-bold flex items-center gap-1">
+          <i class="fa-solid fa-copy"></i> 複製 GAS 程式碼
+        </button>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="testGasConnection()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl">
+            <i class="fa-solid fa-rotate text-xs"></i> 測試連線
+          </button>
+          <button onclick="closeModal('gasModal')" class="px-4 py-2 bg-slate-100 rounded-xl font-bold text-slate-600">關閉</button>
+          <button onclick="saveGasSettings()" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-xs">儲存並同步</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10. 會場地圖編輯 Modal -->
+  <div id="mapEditModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-white w-full max-w-xl rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4 my-auto text-xs sm:text-sm">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="font-extrabold text-slate-800 text-base sm:text-lg flex items-center gap-2">
+          <i class="fa-solid fa-map-location-dot text-emerald-600"></i> 編輯會場分區指引
+        </h3>
+        <button onclick="closeModal('mapEditModal')" class="text-slate-400 hover:text-slate-600 text-lg">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div id="mapEditZonesList" class="space-y-3"></div>
+      <div class="flex justify-between items-center pt-2 border-t">
+        <button type="button" onclick="resetDefaultVenueZones()" class="text-rose-500 hover:text-rose-700 font-bold">恢復預設</button>
+        <div class="flex items-center gap-2">
+          <button onclick="closeModal('mapEditModal')" class="px-4 py-2 bg-slate-100 rounded-xl font-bold text-slate-600">取消</button>
+          <button onclick="saveVenueZones()" class="px-5 py-2 bg-emerald-600 text-white rounded-xl font-bold shadow-xs">儲存地圖</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast 提示容器 -->
+  <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 max-w-sm pointer-events-none no-print"></div>
+
+  <script>
+    // 預先寫入使用者部署成功的專屬 Google Apps Script (GAS) Web App 網址
+    const PRE_CONFIGURED_GAS_URL = "https://script.google.com/macros/s/AKfycbxluHi9At2Hu1QrlgRtg55J31RVUB3yaUzptrHIkcPm3id9BmImRMgBua-50uoU34SuuA/exec";
+
+    const DEFAULT_REG_RULES = {
+      mainTitle: '新北市立佳林國民中學 115學年度 校慶園遊會',
+      appTitle: '佳林國中歡樂園遊會',
+      appSubtitle: '智慧導覽、線上報名、用電調查與攤位管理系統',
+      operationSteps: `1. 進入「佳林國中園遊會管理與線上報名系統」，點擊上方【班級攤位報名表】分頁。
+2. 填寫班級代碼（如 705、801）、攤位名稱、學生負責人與指導導師姓名。
+3. 設定專屬密碼：請務必自訂數字 5 碼管理密碼（登入維護菜單與限時特價快訊時使用）。
+4. 用電與商品調查：如需用電請確實填列設備名稱與瓦數；逐項填寫販售品項與售價。
+5. 確認送出後，系統將自動產生專屬【A4 正式確認單】，請列印紙本。`,
+      powerNotice: `一、 為預防校慶當日整體用電安全及各項設備順利運行，本次園遊會活動將進行各班用電管控。採不用電為原則，部分狀況可申請用電。
+二、 需用電班級需填寫用電申請表，以利攤位安排及用電管制。每攤用電上限為一千瓦。
+三、 申請用電班級需於攤位位置確定後，自備合適長度之延長線。
+四、 嚴禁各類烹煮類活動(包括電磁爐、烤箱、烤麵包機、電鍋等)接用學校電源，以免跳電。除園遊會攤位外，不得將電源用於其他用途(EX.手機充電)。
+五、 學務處將於校慶當日進行各攤位普查，確認是否有違規情事。
+六、 違反上述規定之攤位，經巡查後，沒收相關違規電器用品，並扣減攤位績優分數。`,
+      generalNotice: `※ 七八年級各班一定要擺攤，九年級各班自由參加 (九年級如不擺攤，則不需繳回本表)。
+※ 各班請確實填寫攤位商品及售價，並規劃合適之量做準備。
+※ 當日園遊會以現金交易。`,
+      bilingualSubsidy: `(使用雙語佈置攤位可向教務處申請500元補助，要有500元收據。)`
+    };
+
+    const DEFAULT_DATA = {
+      announcements: [
+        {
+          id: 'ann_1',
+          title: '🎪 115學年度佳林國中校慶園遊會熱烈登場！',
+          content: '歡迎全校師生、家長及社區嘉賓共襄盛舉，請大家共同維護校園環境整潔，配合垃圾分類及自備環保餐具！',
+          isUrgent: true,
+          time: '08:30'
+        },
+        {
+          id: 'ann_2',
+          title: '📢 攤位用電安全與環境維護提醒',
+          content: '請各設攤班級注意用電上限 1000W，嚴禁使用未經申請核准之高耗電烹煮設備，違者依校規沒收電器並扣攤位績優分數。',
+          isUrgent: false,
+          time: '09:00'
+        }
+      ],
+      booths: [
+        {
+          id: 'b_801',
+          classId: '801',
+          name: '起司瀑布炒泡麵與懷舊紅茶',
+          category: '飲食類',
+          zone: 'A區',
+          location: 'A-03',
+          pin: '12345',
+          leader: '陳小明',
+          teacher: '林老師',
+          needAssistantTeacher: '需要',
+          useBilingual: '是',
+          slogan: '801 班起司炒泡麵，一口入魂！',
+          items: [
+            { id: 'i1', name: '招牌起司炒泡麵', price: 60, status: '熱賣中', note: '加蛋+10元' },
+            { id: 'i2', name: '古早味決明子紅茶', price: 25, status: '熱賣中', note: '微糖去冰' }
+          ],
+          deals: [
+            {
+              id: 'd1',
+              title: '炒泡麵 + 紅茶現折 10 元！',
+              origPrice: 85,
+              promoPrice: 75,
+              desc: '出示手機畫面即可現享折價，限量50份！',
+              imageUrl: '',
+              time: '10:15'
+            }
+          ]
+        },
+        {
+          id: 'b_705',
+          classId: '705',
+          name: '佳林極品手搖黑糖珍珠鮮奶',
+          category: '飲食類',
+          zone: 'B區',
+          location: 'B-02',
+          pin: '12345',
+          leader: '李小芬',
+          teacher: '張老師',
+          needAssistantTeacher: '不需要',
+          useBilingual: '否',
+          slogan: '七年五班純手工慢熬黑糖！',
+          items: [
+            { id: 'i4', name: '黑糖珍珠鮮奶', price: 50, status: '熱賣中', note: '純鮮奶' }
+          ],
+          deals: []
+        },
+        {
+          id: 'b_809',
+          classId: '809',
+          name: '百發百中神射手套圈圈',
+          category: '遊樂類',
+          zone: 'B區',
+          location: 'B-07',
+          pin: '12345',
+          leader: '黃大偉',
+          teacher: '王老師',
+          needAssistantTeacher: '需要',
+          useBilingual: '是',
+          slogan: '巨大布偶福袋抱回家！',
+          items: [
+            { id: 'i6', name: '套圈圈 10 枚', price: 30, status: '熱賣中', note: '有安慰獎' }
+          ],
+          deals: []
+        }
+      ]
+    };
+
+    let appState = {
+      role: 'visitor',
+      impersonatedFromAdmin: false,
+      currentBoothId: 'b_801',
+      selectedCategory: '全部',
+      data: JSON.parse(JSON.stringify(DEFAULT_DATA)),
+      regRules: JSON.parse(JSON.stringify(DEFAULT_REG_RULES)),
+      gasUrl: PRE_CONFIGURED_GAS_URL,
+      allConfiguredSlots: [],
+      lotterySlots: [],
+      venueZones: [
+        { code: 'A', name: 'A區 - 操場環形跑道', icon: '🏃‍♂️🍜', desc: '美食熱炒、炸物、大會主舞台！' },
+        { code: 'B', name: 'B區 - 風雨球場', icon: '🎯🧋', desc: '趣味益智遊戲、射飛鏢、套圈圈、手搖冷飲。' },
+        { code: 'C', name: 'C區 - 行政大樓川堂', icon: '🎪🎨', desc: '大會服務台、愛心義賣、似顏繪、醫療站。' }
+      ],
+      schedule: {
+        registrationStart: '2026-10-01T08:00',
+        registrationEnd: '2026-10-15T17:00'
+      }
+    };
+
+    let powerDeviceRows = [];
+    let itemPriceRows = [];
+    let currentDealCompressedBase64 = '';
+
+    function persistData() {
+      localStorage.setItem('jl_carnival_data_v5', JSON.stringify(appState.data));
+      localStorage.setItem('jl_carnival_slots_v5', JSON.stringify(appState.allConfiguredSlots));
+      localStorage.setItem('jl_carnival_zones_v5', JSON.stringify(appState.venueZones));
+      localStorage.setItem('jl_carnival_schedule_v5', JSON.stringify(appState.schedule));
+      localStorage.setItem('jl_carnival_rules_v5', JSON.stringify(appState.regRules));
+      refreshAvailableLotterySlots();
+    }
+
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      if (!container) return;
+      const toast = document.createElement('div');
+      const icons = {
+        success: 'fa-circle-check text-emerald-500',
+        error: 'fa-circle-exclamation text-rose-500',
+        info: 'fa-circle-info text-indigo-500',
+        warn: 'fa-triangle-exclamation text-amber-500'
+      };
+      toast.className = 'bg-white p-3.5 rounded-2xl shadow-xl border border-slate-200 flex items-center gap-3 text-sm font-bold text-slate-800 pointer-events-auto transform transition duration-300 translate-y-2 opacity-0';
+      toast.innerHTML = `<i class="fa-solid ${icons[type] || icons.info} text-lg"></i><span>${message}</span>`;
+      container.appendChild(toast);
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      });
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    function openModal(modalId) {
+      const el = document.getElementById(modalId);
+      if (el) {
+        el.classList.remove('hidden');
+        el.classList.add('flex');
+      }
+    }
+
+    function closeModal(modalId) {
+      const el = document.getElementById(modalId);
+      if (el) {
+        el.classList.add('hidden');
+        el.classList.remove('flex');
+      }
+    }
+
+    function handleLogout() {
+      appState.impersonatedFromAdmin = false;
+      const boothPinInput = document.getElementById('boothPinInput');
+      const adminPasswordInput = document.getElementById('adminPasswordInput');
+      if (boothPinInput) boothPinInput.value = '';
+      if (adminPasswordInput) adminPasswordInput.value = '';
+      
+      setRole('visitor');
+      switchTab('stallsTab');
+      showToast('已安全登出並清除輸入密碼', 'info');
+    }
+
+    function switchTab(tabId) {
+      closeNoticeSheet();
+      if (tabId !== 'registrationTab') {
+        const pSheet = document.getElementById('printSheetArea');
+        if (pSheet) pSheet.classList.add('hidden');
+      }
+
+      const tabs = ['stallsTab', 'dealsTab', 'announcementsTab', 'mapTab', 'registrationTab', 'portalTab'];
+      tabs.forEach(t => {
+        const sec = document.getElementById(t);
+        if (sec) sec.classList.toggle('hidden', t !== tabId);
+
+        const dBtn = document.getElementById(`desktop-tab-${t}`);
+        if (dBtn) {
+          if (t === tabId) {
+            dBtn.className = 'px-5 py-2.5 text-sm font-bold border-b-2 border-rose-500 text-rose-600 transition flex items-center gap-2';
+          } else {
+            dBtn.className = 'px-5 py-2.5 text-sm font-bold border-b-2 border-transparent text-slate-600 hover:text-slate-900 transition flex items-center gap-2';
+          }
+        }
+
+        const mBtn = document.getElementById(`mobile-tab-${t}`);
+        if (mBtn) {
+          mBtn.classList.toggle('text-rose-600', t === tabId);
+          mBtn.classList.toggle('text-slate-500', t !== tabId);
+        }
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderRegRulesDisplay() {
+      const mainTitle = appState.regRules.mainTitle || DEFAULT_REG_RULES.mainTitle;
+      const appTitle = appState.regRules.appTitle || DEFAULT_REG_RULES.appTitle;
+      const appSubtitle = appState.regRules.appSubtitle || DEFAULT_REG_RULES.appSubtitle;
+
+      document.title = `🎪 ${appTitle} - ${appSubtitle}`;
+      const navMain = document.getElementById('navMainTitleDisplay');
+      const navSub = document.getElementById('navSubtitleDisplay');
+      if (navMain) navMain.innerText = appTitle;
+      if (navSub) navSub.innerText = appSubtitle;
+
+      const pSheetTitle = document.getElementById('printSheetMainTitle');
+      if (pSheetTitle) pSheetTitle.innerText = mainTitle;
+
+      const nSheetTitle = document.getElementById('noticeSheetMainTitle');
+      const nSheetFooter = document.getElementById('noticeSheetFooterSchool');
+      if (nSheetTitle) nSheetTitle.innerText = mainTitle;
+      if (nSheetFooter) nSheetFooter.innerText = `${mainTitle}大會公佈`;
+
+      const pNoticeEl = document.getElementById('displayPowerNotice');
+      const gNoticeEl = document.getElementById('displayGeneralNotice');
+      const bHintEl = document.getElementById('displayBilingualSubsidyHint');
+      const printPowerNoticeCompact = document.getElementById('printPowerNoticeCompact');
+      const printGeneralNoticeCompact = document.getElementById('printGeneralNoticeCompact');
+
+      if (pNoticeEl) pNoticeEl.innerText = appState.regRules.powerNotice;
+      if (gNoticeEl) gNoticeEl.innerText = appState.regRules.generalNotice;
+      if (bHintEl) bHintEl.innerText = appState.regRules.bilingualSubsidy;
+
+      if (printPowerNoticeCompact) {
+        printPowerNoticeCompact.innerText = appState.regRules.powerNotice.replace(/\n+/g, ' ');
+      }
+      if (printGeneralNoticeCompact) {
+        printGeneralNoticeCompact.innerText = `${appState.regRules.generalNotice.replace(/\n+/g, ' ')} ${appState.regRules.bilingualSubsidy || ''}`;
+      }
+
+      const noticeSheetStepsText = document.getElementById('noticeSheetStepsText');
+      if (noticeSheetStepsText) {
+        noticeSheetStepsText.innerText = appState.regRules.operationSteps || DEFAULT_REG_RULES.operationSteps;
+      }
+    }
+
+    function openRegRulesModal() {
+      document.getElementById('editMainTitleInput').value = appState.regRules.mainTitle || DEFAULT_REG_RULES.mainTitle;
+      document.getElementById('editAppTitleInput').value = appState.regRules.appTitle || DEFAULT_REG_RULES.appTitle;
+      document.getElementById('editAppSubtitleInput').value = appState.regRules.appSubtitle || DEFAULT_REG_RULES.appSubtitle;
+      document.getElementById('editOperationStepsInput').value = appState.regRules.operationSteps || DEFAULT_REG_RULES.operationSteps;
+      document.getElementById('editPowerNoticeInput').value = appState.regRules.powerNotice || '';
+      document.getElementById('editGeneralNoticeInput').value = appState.regRules.generalNotice || '';
+      document.getElementById('editBilingualSubsidyInput').value = appState.regRules.bilingualSubsidy || '';
+      openModal('regRulesModal');
+    }
+
+    function resetDefaultOperationSteps() {
+      document.getElementById('editOperationStepsInput').value = DEFAULT_REG_RULES.operationSteps;
+      showToast('已載入預設的 5 步驟報名操作流程', 'info');
+    }
+
+    function saveRegRulesSettings() {
+      const mainTitle = document.getElementById('editMainTitleInput').value.trim();
+      const appTitle = document.getElementById('editAppTitleInput').value.trim();
+      const appSubtitle = document.getElementById('editAppSubtitleInput').value.trim();
+      const operationSteps = document.getElementById('editOperationStepsInput').value.trim();
+      const powerNotice = document.getElementById('editPowerNoticeInput').value.trim();
+      const generalNotice = document.getElementById('editGeneralNoticeInput').value.trim();
+      const bilingualSubsidy = document.getElementById('editBilingualSubsidyInput').value.trim();
+
+      appState.regRules = {
+        mainTitle: mainTitle || DEFAULT_REG_RULES.mainTitle,
+        appTitle: appTitle || DEFAULT_REG_RULES.appTitle,
+        appSubtitle: appSubtitle || DEFAULT_REG_RULES.appSubtitle,
+        operationSteps: operationSteps || DEFAULT_REG_RULES.operationSteps,
+        powerNotice: powerNotice || DEFAULT_REG_RULES.powerNotice,
+        generalNotice: generalNotice || DEFAULT_REG_RULES.generalNotice,
+        bilingualSubsidy: bilingualSubsidy || DEFAULT_REG_RULES.bilingualSubsidy
+      };
+
+      persistData();
+      renderRegRulesDisplay();
+      closeModal('regRulesModal');
+      showToast('活動標題、報名須知與補助說明已儲存並同步！', 'success');
+      autoSyncIfNeeded();
+    }
+
+    function resetDefaultRegRules() {
+      appState.regRules = JSON.parse(JSON.stringify(DEFAULT_REG_RULES));
+      document.getElementById('editMainTitleInput').value = appState.regRules.mainTitle;
+      document.getElementById('editAppTitleInput').value = appState.regRules.appTitle;
+      document.getElementById('editAppSubtitleInput').value = appState.regRules.appSubtitle;
+      document.getElementById('editOperationStepsInput').value = appState.regRules.operationSteps;
+      document.getElementById('editPowerNoticeInput').value = appState.regRules.powerNotice;
+      document.getElementById('editGeneralNoticeInput').value = appState.regRules.generalNotice;
+      document.getElementById('editBilingualSubsidyInput').value = appState.regRules.bilingualSubsidy;
+      showToast('已全部還原為系統預設標題與規範文案', 'info');
+    }
+
+    function execEditorCommand(command, value = null) {
+      document.execCommand(command, false, value);
+      document.getElementById('regDescription').focus();
+    }
+
+    function addPowerDeviceRow(name = '', watts = 100, count = 1, note = '') {
+      const id = 'pow_' + Date.now() + Math.random().toString(36).substr(2, 4);
+      powerDeviceRows.push({ id, name, watts: Number(watts), count: Number(count), note });
+      renderPowerTable();
+    }
+
+    function removePowerDeviceRow(id) {
+      powerDeviceRows = powerDeviceRows.filter(r => r.id !== id);
+      renderPowerTable();
+    }
+
+    function updatePowerDeviceField(id, field, value) {
+      const row = powerDeviceRows.find(r => r.id === id);
+      if (row) {
+        if (field === 'watts' || field === 'count') {
+          row[field] = Number(value) || 0;
+        } else {
+          row[field] = value;
+        }
+        renderPowerTable();
+      }
+    }
+
+    function renderPowerTable() {
+      const tbody = document.getElementById('powerSurveyTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      let totalWatts = 0;
+
+      powerDeviceRows.forEach((row) => {
+        const subtotal = (row.watts || 0) * (row.count || 1);
+        totalWatts += subtotal;
+        const tr = document.createElement('tr');
+        tr.className = 'border-b border-amber-100 hover:bg-amber-50/50';
+        tr.innerHTML = `
+          <td class="py-1.5 px-2">
+            <input type="text" value="${row.name}" placeholder="如：保溫展示燈" oninput="updatePowerDeviceField('${row.id}', 'name', this.value)" class="w-full p-1.5 rounded-lg border border-amber-200 text-xs sm:text-sm font-bold bg-white">
+          </td>
+          <td class="py-1.5 px-2">
+            <input type="number" min="0" value="${row.watts}" oninput="updatePowerDeviceField('${row.id}', 'watts', this.value)" class="w-full p-1.5 rounded-lg border border-amber-200 text-xs sm:text-sm font-mono font-bold bg-white text-right">
+          </td>
+          <td class="py-1.5 px-2">
+            <input type="number" min="1" value="${row.count}" oninput="updatePowerDeviceField('${row.id}', 'count', this.value)" class="w-full p-1.5 rounded-lg border border-amber-200 text-xs sm:text-sm font-mono font-bold bg-white text-center">
+          </td>
+          <td class="py-1.5 px-2 text-right font-mono font-black text-amber-900 text-xs sm:text-sm">
+            ${subtotal} W
+          </td>
+          <td class="py-1.5 px-2">
+            <input type="text" value="${row.note}" placeholder="規格備註" oninput="updatePowerDeviceField('${row.id}', 'note', this.value)" class="w-full p-1.5 rounded-lg border border-amber-200 text-xs bg-white">
+          </td>
+          <td class="py-1.5 px-1 text-center">
+            <button type="button" onclick="removePowerDeviceRow('${row.id}')" class="text-rose-500 hover:text-rose-700 p-1">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      const totalDisplay = document.getElementById('totalWattsDisplay');
+      const warningEl = document.getElementById('powerLimitWarning');
+      if (totalDisplay) totalDisplay.innerText = `${totalWatts} W`;
+      if (warningEl) {
+        if (totalWatts > 1000) {
+          warningEl.innerHTML = `<span class="text-rose-600 font-bold">⚠️ 超過 1000W 上限 (${totalWatts}W)，請調配設備以免跳電！</span>`;
+        } else {
+          warningEl.innerHTML = `<span class="text-emerald-700 font-bold">✅ 用電安全符合 1000W 以內規範</span>`;
+        }
+      }
+    }
+
+    function addItemPriceRow(name = '', price = 50, note = '') {
+      const id = 'pr_' + Date.now() + Math.random().toString(36).substr(2, 4);
+      itemPriceRows.push({ id, name, price: Number(price), note });
+      renderPriceTable();
+    }
+
+    function removeItemPriceRow(id) {
+      itemPriceRows = itemPriceRows.filter(r => r.id !== id);
+      renderPriceTable();
+    }
+
+    function updatePriceField(id, field, value) {
+      const row = itemPriceRows.find(r => r.id === id);
+      if (row) {
+        if (field === 'price') {
+          row.price = Number(value) || 0;
+        } else {
+          row[field] = value;
+        }
+      }
+    }
+
+    function renderPriceTable() {
+      const tbody = document.getElementById('priceSurveyTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      itemPriceRows.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.className = 'border-b border-indigo-100 hover:bg-indigo-50/50';
+        tr.innerHTML = `
+          <td class="py-1.5 px-2">
+            <input type="text" value="${row.name}" placeholder="如：現烤脆皮雞蛋糕" oninput="updatePriceField('${row.id}', 'name', this.value)" class="w-full p-1.5 rounded-lg border border-indigo-200 text-xs sm:text-sm font-bold bg-white">
+          </td>
+          <td class="py-1.5 px-2">
+            <input type="number" min="0" value="${row.price}" oninput="updatePriceField('${row.id}', 'price', this.value)" class="w-full p-1.5 rounded-lg border border-indigo-200 text-xs sm:text-sm font-mono font-bold bg-white text-right">
+          </td>
+          <td class="py-1.5 px-2">
+            <input type="text" value="${row.note}" placeholder="份量/優惠" oninput="updatePriceField('${row.id}', 'note', this.value)" class="w-full p-1.5 rounded-lg border border-indigo-200 text-xs bg-white">
+          </td>
+          <td class="py-1.5 px-1 text-center">
+            <button type="button" onclick="removeItemPriceRow('${row.id}')" class="text-rose-500 hover:text-rose-700 p-1">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function loadSampleRegistration() {
+      document.getElementById('regClassId').value = '805';
+      document.getElementById('regBoothName').value = '佳林特選焦糖爆米花與高山冷泡茶';
+      document.getElementById('regCustomPin').value = '54321';
+      document.getElementById('regCategory').value = '飲食類';
+      document.getElementById('regLeader').value = '王大明';
+      document.getElementById('regTeacher').value = '張導師';
+
+      const assistantRadios = document.getElementsByName('needAssistantTeacher');
+      for (const r of assistantRadios) {
+        if (r.value === '需要') r.checked = true;
+      }
+      const bilingualRadios = document.getElementsByName('useBilingual');
+      for (const r of bilingualRadios) {
+        if (r.value === '是') r.checked = true;
+      }
+
+      powerDeviceRows = [
+        { id: 'p1', name: '商業用爆米花機', watts: 750, count: 1, note: '需獨立插座' },
+        { id: 'p2', name: '小型展示保溫燈', watts: 100, count: 1, note: '一般延長線' }
+      ];
+      renderPowerTable();
+
+      itemPriceRows = [
+        { id: 'pr1', name: '美式經典焦糖爆米花 (大杯)', price: 50, note: '非基改玉米' },
+        { id: 'pr2', name: '阿里山高山冷泡金萱茶', price: 35, note: '無糖 500ml' }
+      ];
+      renderPriceTable();
+
+      document.getElementById('regDescription').innerHTML = `
+        <ol>
+          <li><strong>衛生承諾：</strong>組員全程配戴口罩手套，生熟食嚴格分開。</li>
+          <li><strong>環保減塑：</strong>自備環保杯與餐具，每筆消費現折 5 元！</li>
+          <li><strong>用電規範：</strong>自備合格延長線，不私接手機充電。</li>
+        </ol>
+      `;
+
+      showToast('已代入 805 班示範資料！', 'info');
+    }
+
+    function clearRegistrationForm() {
+      document.getElementById('boothRegistrationForm').reset();
+      document.getElementById('regDescription').innerHTML = '';
+      powerDeviceRows = [];
+      itemPriceRows = [];
+      renderPowerTable();
+      renderPriceTable();
+      document.getElementById('printSheetArea').classList.add('hidden');
+      showToast('表單已清空重設', 'info');
+    }
+
+    function handleRegistrationSubmit(event) {
+      event.preventDefault();
+
+      const classId = document.getElementById('regClassId').value.trim();
+      const boothName = document.getElementById('regBoothName').value.trim();
+      const pin = document.getElementById('regCustomPin').value.trim();
+      const category = document.getElementById('regCategory').value;
+      const leader = document.getElementById('regLeader').value.trim();
+      const teacher = document.getElementById('regTeacher').value.trim();
+      const descHtml = document.getElementById('regDescription').innerHTML;
+
+      const needAssistant = document.querySelector('input[name="needAssistantTeacher"]:checked')?.value || '不需要';
+      const useBilingual = document.querySelector('input[name="useBilingual"]:checked')?.value || '否';
+
+      if (!/^\d{5}$/.test(pin)) {
+        showToast('管理密碼必須為 5 碼純數字！', 'error');
+        return;
+      }
+
+      let existing = appState.data.booths.find(b => b.classId === classId);
+      if (existing) {
+        existing.name = boothName;
+        existing.category = category;
+        existing.leader = leader;
+        existing.teacher = teacher;
+        existing.pin = pin;
+        existing.needAssistantTeacher = needAssistant;
+        existing.useBilingual = useBilingual;
+        existing.items = itemPriceRows.map(r => ({
+          id: 'i_' + Date.now() + Math.random().toString(36).substr(2, 4),
+          name: r.name,
+          price: r.price,
+          status: '熱賣中',
+          note: r.note
+        }));
+      } else {
+        const newBooth = {
+          id: 'b_' + classId,
+          classId: classId,
+          name: boothName,
+          category: category,
+          zone: 'A區',
+          location: '待抽籤',
+          pin: pin,
+          leader: leader,
+          teacher: teacher,
+          needAssistantTeacher: needAssistant,
+          useBilingual: useBilingual,
+          slogan: `${classId} 班熱烈歡迎大家！`,
+          items: itemPriceRows.map(r => ({
+            id: 'i_' + Date.now() + Math.random().toString(36).substr(2, 4),
+            name: r.name,
+            price: r.price,
+            status: '熱賣中',
+            note: r.note
+          })),
+          deals: []
+        };
+        appState.data.booths.push(newBooth);
+      }
+
+      persistData();
+      renderStalls();
+      populateBoothLoginSelect();
+      renderLotteryModule();
+
+      document.getElementById('printSerialNo').innerText = `正式單號：JL-115-${Date.now().toString().slice(-4)}`;
+      document.getElementById('printSubmitTime').innerText = `填報時間：${new Date().toLocaleString('zh-TW', { hour12: false })}`;
+      document.getElementById('pClassId').innerText = `${classId} 班`;
+      document.getElementById('pCategory').innerText = category;
+      document.getElementById('pBoothName').innerText = boothName;
+      document.getElementById('pLeader').innerText = leader;
+      document.getElementById('pTeacher').innerText = teacher;
+      document.getElementById('pAssistant').innerText = needAssistant;
+      document.getElementById('pBilingual').innerText = useBilingual === '是' ? '是 (申請500元補助)' : '否';
+      document.getElementById('pDescription').innerHTML = descHtml || '無特殊承諾事項。';
+
+      let totalWatts = 0;
+      let powerHtml = '<table class="w-full text-xs border border-slate-400"><thead><tr class="bg-slate-50 border-b border-slate-400"><th class="p-1 border-r border-slate-400 w-12 text-center">項次</th><th class="p-1 border-r border-slate-400">設備名稱</th><th class="p-1 border-r border-slate-400 w-20 text-center">瓦數</th><th class="p-1 border-r border-slate-400 w-16 text-center">台數</th><th class="p-1 border-r border-slate-400 w-24 text-right">小計</th><th class="p-1">備註說明</th></tr></thead><tbody>';
+      if (powerDeviceRows.length === 0) {
+        powerHtml += '<tr><td colspan="6" class="p-1.5 text-center text-slate-500 font-bold">本攤位採【不用電】原則</td></tr>';
+      } else {
+        powerDeviceRows.forEach((r, idx) => {
+          const sub = (r.watts || 0) * (r.count || 1);
+          totalWatts += sub;
+          powerHtml += `<tr class="border-b border-slate-300"><td class="p-1 border-r border-slate-300 text-center font-mono">${idx + 1}</td><td class="p-1 border-r border-slate-300 font-bold">${r.name}</td><td class="p-1 border-r border-slate-300 text-center font-mono">${r.watts}W</td><td class="p-1 border-r border-slate-300 text-center font-mono">${r.count}</td><td class="p-1 border-r border-slate-300 text-right font-mono font-bold">${sub}W</td><td class="p-1 text-slate-600">${r.note || ''}</td></tr>`;
+        });
+        powerHtml += `<tr class="bg-slate-50 font-bold"><td colspan="4" class="p-1 text-right border-r border-slate-400">合計總瓦數：</td><td class="p-1 text-right font-mono font-black border-r border-slate-400">${totalWatts} W</td><td class="p-1 text-xs ${totalWatts > 1000 ? 'text-rose-700 font-black' : 'text-emerald-700'}">${totalWatts > 1000 ? '⚠️ 超過 1000W 上限規定' : '✅ 符合 1000W 以內安全規範'}</td></tr>`;
+      }
+      powerHtml += '</tbody></table>';
+      document.getElementById('pPowerSummaryTable').innerHTML = powerHtml;
+
+      let priceHtml = '<table class="w-full text-xs border border-slate-400"><thead><tr class="bg-slate-50 border-b border-slate-400"><th class="p-1 border-r border-slate-400 w-12 text-center">項次</th><th class="p-1 border-r border-slate-400">販售品項</th><th class="p-1 border-r border-slate-400 w-28 text-right">售價(元)</th><th class="p-1">規格/促銷說明</th></tr></thead><tbody>';
+      if (itemPriceRows.length === 0) {
+        priceHtml += '<tr><td colspan="4" class="p-1.5 text-center text-slate-500 font-bold">尚未登記品項</td></tr>';
+      } else {
+        itemPriceRows.forEach((r, idx) => {
+          priceHtml += `<tr class="border-b border-slate-300"><td class="p-1 border-r border-slate-300 text-center font-mono">${idx + 1}</td><td class="p-1 border-r border-slate-300 font-bold">${r.name}</td><td class="p-1 border-r border-slate-300 text-right font-mono font-bold">${r.price} 元</td><td class="p-1 text-slate-600">${r.note || ''}</td></tr>`;
+        });
+      }
+      priceHtml += '</tbody></table>';
+      document.getElementById('pPriceSummaryTable').innerHTML = priceHtml;
+
+      adjustPrintNoticesFontSize(itemPriceRows.length);
+      closeNoticeSheet();
+
+      const printArea = document.getElementById('printSheetArea');
+      printArea.classList.remove('hidden');
+      printArea.scrollIntoView({ behavior: 'smooth' });
+
+      showToast(`【${classId} 班】報名完成！已產出 A4 單張核章確認單`, 'success');
+      autoSyncIfNeeded();
+    }
+
+    function adjustPrintNoticesFontSize(itemCount) {
+      const cell = document.getElementById('printNoticesCell');
+      if (!cell) return;
+
+      cell.classList.remove('notices-compact-tier1', 'notices-compact-tier2', 'notices-compact-tier3');
+
+      if (itemCount >= 8) {
+        cell.className = 'border border-slate-800 py-1 px-2.5 leading-tight space-y-0.5 text-[8px] sm:text-[8.5px] notices-compact-tier3';
+      } else if (itemCount >= 5) {
+        cell.className = 'border border-slate-800 py-1.5 px-3 leading-snug space-y-1 text-[9.5px] sm:text-[10px] notices-compact-tier2';
+      } else if (itemCount >= 4) {
+        cell.className = 'border border-slate-800 py-2 px-3 leading-snug space-y-1 text-[10px] sm:text-[11px] notices-compact-tier1';
+      } else {
+        cell.className = 'border border-slate-800 py-2 px-3 leading-snug space-y-1.5 text-[11px] sm:text-xs';
+      }
+    }
+
+    function openNoticePrintSheet() {
+      document.getElementById('printSheetArea').classList.add('hidden');
+
+      const noticeArea = document.getElementById('printNoticeArea');
+      document.getElementById('noticeSheetStepsText').innerText = appState.regRules.operationSteps || DEFAULT_REG_RULES.operationSteps;
+      document.getElementById('noticeSheetPowerText').innerText = appState.regRules.powerNotice;
+      document.getElementById('noticeSheetGeneralText').innerText = appState.regRules.generalNotice;
+      document.getElementById('noticeSheetSubsidyText').innerText = appState.regRules.bilingualSubsidy;
+      document.getElementById('noticeSheetDeadlineText').innerText = `${appState.schedule.registrationEnd.replace('T', ' ')} 截止`;
+
+      noticeArea.classList.remove('hidden');
+      noticeArea.scrollIntoView({ behavior: 'smooth' });
+      showToast('已開啟「訓育組各班設攤須知發放通知單」A4 滿版預覽！', 'info');
+    }
+
+    function closeNoticeSheet() {
+      const noticeArea = document.getElementById('printNoticeArea');
+      if (noticeArea) noticeArea.classList.add('hidden');
+    }
+
+    function renderCategoryChips() {
+      const categories = ['全部', '飲食類', '遊樂類', '百貨類', '其他類'];
+      const container = document.getElementById('categoryChips');
+      if (!container) return;
+
+      container.innerHTML = categories.map(cat => `
+        <button onclick="selectCategory('${cat}')" class="px-4 py-2 rounded-2xl whitespace-nowrap transition ${
+          appState.selectedCategory === cat
+            ? 'bg-rose-500 text-white shadow-xs'
+            : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
+        }">
+          ${cat}
+        </button>
+      `).join('');
+    }
+
+    function selectCategory(cat) {
+      appState.selectedCategory = cat;
+      renderCategoryChips();
+      renderStalls();
+    }
+
+    function renderStalls() {
+      const grid = document.getElementById('stallsGrid');
+      if (!grid) return;
+      const search = (document.getElementById('stallSearchInput')?.value || '').toLowerCase().trim();
+
+      const filtered = appState.data.booths.filter(b => {
+        const matchCat = appState.selectedCategory === '全部' || b.category === appState.selectedCategory;
+        const matchSearch = !search ||
+          b.classId.toLowerCase().includes(search) ||
+          b.name.toLowerCase().includes(search) ||
+          (b.slogan && b.slogan.toLowerCase().includes(search)) ||
+          b.items.some(i => i.name.toLowerCase().includes(search));
+        return matchCat && matchSearch;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full bg-white rounded-3xl p-10 text-center text-slate-400 space-y-2 border border-slate-200">
+            <i class="fa-solid fa-store-slash text-4xl text-slate-300"></i>
+            <div class="font-bold">查無相符的攤位或商品</div>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(b => `
+        <div class="bg-white rounded-3xl p-5 shadow-xs hover:shadow-md transition border border-slate-200 flex flex-col justify-between space-y-3">
+          <div>
+            <div class="flex items-center justify-between gap-2">
+              <span class="px-2.5 py-1 rounded-xl bg-slate-100 text-slate-700 font-extrabold text-xs">
+                ${b.classId} 班 ｜ ${b.category}
+              </span>
+              <span class="px-2.5 py-1 rounded-xl bg-rose-50 text-rose-600 font-mono font-bold text-xs border border-rose-200">
+                ${b.location || '待抽籤'}
+              </span>
+            </div>
+            <h3 class="text-base sm:text-lg font-black text-slate-800 mt-2">${b.name}</h3>
+            <p class="text-xs text-slate-500 mt-1 italic">"${b.slogan || '佳林國中熱情設攤中！'}"</p>
+          </div>
+
+          <div class="space-y-1.5 pt-2 border-t border-slate-100">
+            <div class="text-xs font-bold text-slate-400">熱門品項：</div>
+            ${b.items && b.items.length > 0 ? b.items.map(it => `
+              <div class="flex items-center justify-between text-xs py-0.5">
+                <span class="font-bold text-slate-700 flex items-center gap-1.5">
+                  <span class="w-1.5 h-1.5 rounded-full ${it.status === '已完售' ? 'bg-slate-300' : 'bg-emerald-500'}"></span>
+                  ${it.name}
+                  ${it.status === '已完售' ? '<span class="text-[10px] text-rose-500 font-normal">(完售)</span>' : ''}
+                </span>
+                <span class="font-mono font-black text-slate-900">${it.price} 元</span>
+              </div>
+            `).join('') : '<div class="text-xs text-slate-400">尚未登記商品</div>'}
+          </div>
+
+          <div class="pt-2 flex items-center justify-between text-[11px] text-slate-400 border-t border-slate-100">
+            <span>負責人：${b.leader || '--'}</span>
+            <span>指導：${b.teacher || '--'}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function handleStallSearch() {
+      renderStalls();
+    }
+
+    function renderDeals() {
+      const grid = document.getElementById('dealsGrid');
+      if (!grid) return;
+      const allDeals = [];
+      appState.data.booths.forEach(b => {
+        if (b.deals && b.deals.length > 0) {
+          b.deals.forEach(d => {
+            allDeals.push({ ...d, boothName: b.name, classId: b.classId, boothLocation: b.location });
+          });
+        }
+      });
+
+      if (allDeals.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full bg-white rounded-3xl p-10 text-center text-slate-400 space-y-2 border border-slate-200">
+            <i class="fa-solid fa-tag text-4xl text-slate-300"></i>
+            <div class="font-bold">目前尚無進行中的限時特賣</div>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = allDeals.map(d => `
+        <div class="bg-white rounded-3xl p-4 sm:p-5 shadow-xs border border-amber-200 flex flex-col sm:flex-row gap-4 justify-between">
+          ${d.imageUrl ? `
+            <div class="w-full sm:w-32 h-32 rounded-2xl overflow-hidden bg-slate-100 shrink-0">
+              <img src="${d.imageUrl}" alt="${d.title}" class="w-full h-full object-cover">
+            </div>
+          ` : ''}
+          <div class="flex-1 space-y-2 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 font-extrabold text-xs">
+                  ${d.classId} 班 ｜ ${d.boothLocation || '攤位現場'}
+                </span>
+                <span class="text-xs text-slate-400 font-mono">${d.time || '熱賣中'}</span>
+              </div>
+              <h3 class="text-base font-black text-slate-800 mt-1">${d.title}</h3>
+              <p class="text-xs text-slate-600 mt-1 leading-relaxed">${d.desc || ''}</p>
+            </div>
+            <div class="flex items-baseline gap-2 pt-2">
+              <span class="text-xs text-slate-400 line-through">原價 ${d.origPrice || d.promoPrice + 10} 元</span>
+              <span class="text-xl font-black text-rose-600 font-mono">特價 ${d.promoPrice} 元</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function handleDealImageSelect(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          const maxSide = 900;
+
+          if (width > maxSide || height > maxSide) {
+            if (width > height) {
+              height = Math.round((height * maxSide) / width);
+              width = maxSide;
+            } else {
+              width = Math.round((width * maxSide) / height);
+              height = maxSide;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          currentDealCompressedBase64 = canvas.toDataURL('image/jpeg', 0.75);
+          document.getElementById('dealImagePreviewImg').src = currentDealCompressedBase64;
+          document.getElementById('dealImagePreviewBox').classList.remove('hidden');
+          showToast('宣傳照片已完成優化壓縮！', 'info');
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function handleSaveDeal(event) {
+      event.preventDefault();
+      const booth = appState.data.booths.find(b => b.id === appState.currentBoothId);
+      if (!booth) return;
+
+      const title = document.getElementById('dealTitleInput').value.trim();
+      const origPrice = Number(document.getElementById('dealOrigPriceInput').value) || 0;
+      const promoPrice = Number(document.getElementById('dealPromoPriceInput').value) || 0;
+      const desc = document.getElementById('dealDescInput').value.trim();
+      const urlInput = document.getElementById('dealImageUrlInput').value.trim();
+      const finalImage = currentDealCompressedBase64 || urlInput || '';
+
+      const newDeal = {
+        id: 'd_' + Date.now(),
+        title,
+        origPrice,
+        promoPrice,
+        desc,
+        imageUrl: finalImage,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      if (!booth.deals) booth.deals = [];
+      booth.deals.unshift(newDeal);
+      persistData();
+      renderDeals();
+      renderPortalView();
+      closeModal('dealModal');
+      showToast('限時特賣快訊發布成功！', 'success');
+      autoSyncIfNeeded();
+    }
+
+    function renderAnnouncements() {
+      const list = document.getElementById('announcementsList');
+      if (!list) return;
+
+      if (appState.data.announcements.length === 0) {
+        list.innerHTML = `<div class="p-8 text-center text-slate-400 bg-white rounded-3xl border">目前尚無大會公告</div>`;
+        return;
+      }
+
+      list.innerHTML = appState.data.announcements.map(a => `
+        <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-xs border ${a.isUrgent ? 'border-rose-400 bg-rose-50/20' : 'border-slate-200'} space-y-2">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              ${a.isUrgent ? '<span class="px-2 py-0.5 rounded-md bg-rose-600 text-white text-xs font-black">緊急廣播</span>' : ''}
+              <h3 class="font-black text-slate-800 text-base">${a.title}</h3>
+            </div>
+            <span class="text-xs text-slate-400 font-mono">${a.time}</span>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">${a.content}</p>
+          ${appState.role === 'admin' ? `
+            <div class="pt-2 border-t border-slate-100 flex justify-end gap-2 text-xs">
+              <button onclick="editAnnouncement('${a.id}')" class="text-indigo-600 hover:text-indigo-800 font-bold">編輯</button>
+              <button onclick="deleteAnnouncement('${a.id}')" class="text-rose-500 hover:text-rose-700 font-bold">刪除</button>
+            </div>
+          ` : ''}
+        </div>
+      `).join('');
+    }
+
+    function openAddAnnouncementModal() {
+      document.getElementById('editAnnouncementId').value = '';
+      document.getElementById('annTitleInput').value = '';
+      document.getElementById('annContentInput').value = '';
+      document.getElementById('annIsUrgentInput').checked = false;
+      document.getElementById('annModalTitle').innerText = '發布全校大會廣播公告';
+      openModal('announcementModal');
+    }
+
+    function editAnnouncement(id) {
+      const a = appState.data.announcements.find(x => x.id === id);
+      if (!a) return;
+      document.getElementById('editAnnouncementId').value = a.id;
+      document.getElementById('annTitleInput').value = a.title;
+      document.getElementById('annContentInput').value = a.content;
+      document.getElementById('annIsUrgentInput').checked = !!a.isUrgent;
+      document.getElementById('annModalTitle').innerText = '編輯大會廣播公告';
+      openModal('announcementModal');
+    }
+
+    function handleSaveAnnouncement(event) {
+      event.preventDefault();
+      const id = document.getElementById('editAnnouncementId').value;
+      const title = document.getElementById('annTitleInput').value.trim();
+      const content = document.getElementById('annContentInput').value.trim();
+      const isUrgent = document.getElementById('annIsUrgentInput').checked;
+
+      if (id) {
+        const item = appState.data.announcements.find(x => x.id === id);
+        if (item) {
+          item.title = title;
+          item.content = content;
+          item.isUrgent = isUrgent;
+        }
+      } else {
+        appState.data.announcements.unshift({
+          id: 'ann_' + Date.now(),
+          title,
+          content,
+          isUrgent,
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        });
+      }
+
+      persistData();
+      renderAnnouncements();
+      updateTopMarquee();
+      closeModal('announcementModal');
+      showToast('大會公告已更新！', 'success');
+      autoSyncIfNeeded();
+    }
+
+    function deleteAnnouncement(id) {
+      appState.data.announcements = appState.data.announcements.filter(x => x.id !== id);
+      persistData();
+      renderAnnouncements();
+      updateTopMarquee();
+      showToast('公告已刪除', 'info');
+      autoSyncIfNeeded();
+    }
+
+    function updateTopMarquee() {
+      const marquee = document.getElementById('topMarqueeText');
+      if (!marquee) return;
+      const urgent = appState.data.announcements.find(a => a.isUrgent);
+      if (urgent) {
+        marquee.innerHTML = `🔥【重要廣播】${urgent.title} - ${urgent.content}`;
+      } else if (appState.data.announcements[0]) {
+        marquee.innerHTML = `🎪 ${appState.data.announcements[0].title} - ${appState.data.announcements[0].content}`;
+      } else {
+        marquee.innerHTML = '🎪 歡迎光臨 115 學年度佳林國中歡樂校慶園遊會！各班精彩美食與闖關活動火熱進行中！';
+      }
+    }
+
+    function renderVenueMap() {
+      const container = document.getElementById('venueMapContainer');
+      const editBtn = document.getElementById('adminMapEditBtn');
+      if (editBtn) {
+        editBtn.classList.toggle('hidden', appState.role !== 'admin');
+      }
+      if (!container) return;
+      container.innerHTML = appState.venueZones.map(z => {
+        const count = appState.data.booths.filter(b => b.location && b.location.startsWith(z.code)).length;
+        return `
+          <div onclick="filterByZone('${z.code}')" class="bg-slate-50 hover:bg-slate-100 p-5 rounded-3xl border border-slate-200 cursor-pointer transition space-y-2">
+            <div class="text-3xl">${z.icon || '📍'}</div>
+            <h3 class="font-extrabold text-slate-800 text-base">${z.name}</h3>
+            <p class="text-xs text-slate-500 leading-relaxed">${z.desc}</p>
+            <div class="pt-2 font-bold text-xs text-indigo-600">目前共 ${count} 個攤位進駐 →</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function filterByZone(zoneCode) {
+      const input = document.getElementById('stallSearchInput');
+      if (input) input.value = zoneCode + '-';
+      switchTab('stallsTab');
+      renderStalls();
+      showToast(`已為您篩選【${zoneCode} 區】的攤位！`, 'info');
+    }
+
+    function openMapEditModal() {
+      const container = document.getElementById('mapEditZonesList');
+      if (!container) return;
+      container.innerHTML = appState.venueZones.map((z, idx) => `
+        <div class="p-3 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-slate-700">代碼:</span>
+            <input type="text" id="mapZoneCode_${idx}" value="${z.code}" class="w-16 p-1.5 rounded-lg border font-mono font-bold text-center">
+            <span class="font-bold text-slate-700">Emoji:</span>
+            <input type="text" id="mapZoneIcon_${idx}" value="${z.icon}" class="w-20 p-1.5 rounded-lg border text-center">
+          </div>
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">分區名稱</label>
+            <input type="text" id="mapZoneName_${idx}" value="${z.name}" class="w-full p-2 rounded-lg border font-bold">
+          </div>
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">分區說明</label>
+            <textarea id="mapZoneDesc_${idx}" rows="2" class="w-full p-2 rounded-lg border">${z.desc}</textarea>
+          </div>
+        </div>
+      `).join('');
+      openModal('mapEditModal');
+    }
+
+    function saveVenueZones() {
+      appState.venueZones.forEach((z, idx) => {
+        const code = document.getElementById(`mapZoneCode_${idx}`)?.value.trim();
+        const icon = document.getElementById(`mapZoneIcon_${idx}`)?.value.trim();
+        const name = document.getElementById(`mapZoneName_${idx}`)?.value.trim();
+        const desc = document.getElementById(`mapZoneDesc_${idx}`)?.value.trim();
+        if (code) z.code = code;
+        if (icon) z.icon = icon;
+        if (name) z.name = name;
+        if (desc) z.desc = desc;
+      });
+      persistData();
+      renderVenueMap();
+      closeModal('mapEditModal');
+      showToast('會場分區指引已成功更新！', 'success');
+      autoSyncIfNeeded();
+    }
+
+    function resetDefaultVenueZones() {
+      appState.venueZones = [
+        { code: 'A', name: 'A區 - 操場環形跑道', icon: '🏃‍♂️🍜', desc: '美食熱炒、炸物、大會主舞台！' },
+        { code: 'B', name: 'B區 - 風雨球場', icon: '🎯🧋', desc: '趣味益智遊戲、射飛鏢、套圈圈、手搖冷飲。' },
+        { code: 'C', name: 'C區 - 行政大樓川堂', icon: '🎪🎨', desc: '大會服務台、愛心義賣、似顏繪、醫療站。' }
+      ];
+      openMapEditModal();
+      showToast('已恢復預設三大分區設定', 'info');
+    }
+
+    function openRoleModal() {
+      populateBoothLoginSelect();
+      const boothPinInput = document.getElementById('boothPinInput');
+      const adminPasswordInput = document.getElementById('adminPasswordInput');
+      if (boothPinInput) boothPinInput.value = '';
+      if (adminPasswordInput) adminPasswordInput.value = '';
+      openModal('roleModal');
+    }
+
+    function populateBoothLoginSelect() {
+      const sel = document.getElementById('loginBoothSelect');
+      if (!sel) return;
+      sel.innerHTML = appState.data.booths.map(b => `
+        <option value="${b.id}">${b.classId} 班 - ${b.name} (${b.location || '待抽籤'})</option>
+      `).join('');
+    }
+
+    function setRole(roleName, boothId = null) {
+      closeNoticeSheet();
+      appState.role = roleName;
+      if (boothId) appState.currentBoothId = boothId;
+      updateRoleUI();
+      closeModal('roleModal');
+      showToast(`已切換身分為：${roleName === 'admin' ? '大會管理員' : (roleName === 'booth' ? '班級攤位端' : '訪客模式')}`, 'info');
+    }
+
+    function loginAsBooth() {
+      const boothId = document.getElementById('loginBoothSelect').value;
+      const pin = document.getElementById('boothPinInput').value.trim();
+      const booth = appState.data.booths.find(b => b.id === boothId);
+
+      if (!booth) {
+        showToast('找不到該攤位資料', 'error');
+        return;
+      }
+      if (pin !== booth.pin) {
+        showToast('密碼輸入錯誤，請重新確認！', 'error');
+        return;
+      }
+
+      appState.impersonatedFromAdmin = false;
+      document.getElementById('boothPinInput').value = '';
+      setRole('booth', boothId);
+      switchTab('portalTab');
+    }
+
+    function loginAsAdmin() {
+      const pwd = document.getElementById('adminPasswordInput').value.trim();
+      if (pwd === 'admin888') {
+        appState.impersonatedFromAdmin = false;
+        document.getElementById('adminPasswordInput').value = '';
+        setRole('admin');
+        switchTab('portalTab');
+      } else {
+        showToast('管理者密碼錯誤！', 'error');
+      }
+    }
+
+    function impersonateBooth(boothId) {
+      appState.impersonatedFromAdmin = true;
+      appState.currentBoothId = boothId;
+      appState.role = 'booth';
+      updateRoleUI();
+      switchTab('portalTab');
+      showToast('已代理進入該班工作台，隨時可按上方黃條切回管理者！', 'info');
+    }
+
+    function returnToAdminRole() {
+      appState.impersonatedFromAdmin = false;
+      appState.role = 'admin';
+      updateRoleUI();
+      switchTab('portalTab');
+      showToast('已安全切換回大會管理者控制台', 'info');
+    }
+
+    function updateRoleUI() {
+      const label = document.getElementById('currentRoleLabel');
+      const portalTab = document.getElementById('desktopPortalTabName');
+      const mobilePortal = document.getElementById('mobilePortalTabName');
+      const quickAnnounce = document.getElementById('adminAnnouncementQuickBtn');
+      const returnBanner = document.getElementById('adminReturnBanner');
+      const adminEditRegRulesBtn = document.getElementById('adminEditRegRulesBtn');
+      const quickLogoutBtn = document.getElementById('quickLogoutBtn');
+
+      if (returnBanner) {
+        returnBanner.classList.toggle('hidden', !appState.impersonatedFromAdmin);
+      }
+
+      if (quickLogoutBtn) {
+        quickLogoutBtn.classList.toggle('hidden', appState.role === 'visitor');
+        quickLogoutBtn.classList.toggle('flex', appState.role !== 'visitor');
+      }
+
+      if (appState.role === 'admin') {
+        if (label) label.innerText = '大會管理員';
+        if (portalTab) portalTab.innerText = '大會工作站';
+        if (mobilePortal) mobilePortal.innerText = '大會工作站';
+        if (quickAnnounce) quickAnnounce.classList.remove('hidden');
+        if (adminEditRegRulesBtn) adminEditRegRulesBtn.classList.remove('hidden');
+      } else if (appState.role === 'booth') {
+        const b = appState.data.booths.find(x => x.id === appState.currentBoothId);
+        const name = b ? `${b.classId}班` : '攤位端';
+        if (label) label.innerText = name;
+        if (portalTab) portalTab.innerText = `${name}工作台`;
+        if (mobilePortal) mobilePortal.innerText = `${name}工作台`;
+        if (quickAnnounce) quickAnnounce.classList.add('hidden');
+        if (adminEditRegRulesBtn) adminEditRegRulesBtn.classList.add('hidden');
+      } else {
+        if (label) label.innerText = '訪客模式';
+        if (portalTab) portalTab.innerText = '工作台';
+        if (mobilePortal) mobilePortal.innerText = '工作台';
+        if (quickAnnounce) quickAnnounce.classList.add('hidden');
+        if (adminEditRegRulesBtn) adminEditRegRulesBtn.classList.add('hidden');
+      }
+
+      renderPortalView();
+      renderAnnouncements();
+      renderVenueMap();
+    }
+
+    function renderPortalView() {
+      const notLogged = document.getElementById('portalNotLoggedIn');
+      const boothPanel = document.getElementById('boothAdminPanel');
+      const adminPanel = document.getElementById('schoolAdminPanel');
+
+      if (notLogged) notLogged.classList.add('hidden');
+      if (boothPanel) boothPanel.classList.add('hidden');
+      if (adminPanel) adminPanel.classList.add('hidden');
+
+      if (appState.role === 'admin') {
+        if (adminPanel) adminPanel.classList.remove('hidden');
+        renderAdminControlStation();
+      } else if (appState.role === 'booth') {
+        if (boothPanel) boothPanel.classList.remove('hidden');
+        renderBoothControlStation();
+      } else {
+        if (notLogged) notLogged.classList.remove('hidden');
+      }
+    }
+
+    function renderBoothControlStation() {
+      const b = appState.data.booths.find(x => x.id === appState.currentBoothId);
+      if (!b) return;
+
+      document.getElementById('currentBoothTitle').innerText = `${b.classId} 班 - ${b.name}`;
+      document.getElementById('currentBoothSubtext').innerText = `攤位編號：${b.location || '待抽籤'} ｜ 負責人：${b.leader || '--'} ｜ 類別：${b.category}`;
+
+      const itemList = document.getElementById('boothItemsAdminList');
+      if (itemList) {
+        if (!b.items || b.items.length === 0) {
+          itemList.innerHTML = `<div class="p-4 text-center text-slate-400 bg-slate-50 rounded-2xl">尚未新增任何商品</div>`;
+        } else {
+          itemList.innerHTML = b.items.map(it => `
+            <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 border border-slate-200">
+              <div>
+                <span class="font-bold text-slate-800">${it.name}</span>
+                <span class="text-xs text-slate-400 ml-2 font-mono">${it.price} 元</span>
+                ${it.note ? `<span class="text-xs text-slate-500 ml-1">(${it.note})</span>` : ''}
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="toggleItemStatus('${it.id}')" class="px-2.5 py-1 rounded-xl text-xs font-bold ${
+                  it.status === '已完售' ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'
+                }">
+                  ${it.status || '熱賣中'}
+                </button>
+                <button onclick="deleteBoothItem('${it.id}')" class="text-slate-400 hover:text-rose-500 p-1">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </div>
+            </div>
+          `).join('');
+        }
+      }
+
+      const dealList = document.getElementById('boothDealsAdminList');
+      if (dealList) {
+        if (!b.deals || b.deals.length === 0) {
+          dealList.innerHTML = `<div class="p-4 text-center text-slate-400 bg-slate-50 rounded-2xl">尚未發布特價資訊</div>`;
+        } else {
+          dealList.innerHTML = b.deals.map(d => `
+            <div class="flex items-center justify-between p-3 rounded-2xl bg-amber-50/60 border border-amber-200">
+              <div class="flex items-center gap-3">
+                ${d.imageUrl ? `<img src="${d.imageUrl}" class="w-12 h-12 object-cover rounded-xl border">` : ''}
+                <div>
+                  <div class="font-black text-amber-950">${d.title}</div>
+                  <div class="text-xs text-amber-800 font-mono">特價：${d.promoPrice} 元 ｜ 時間：${d.time}</div>
+                </div>
+              </div>
+              <button onclick="deleteBoothDeal('${d.id}')" class="text-rose-500 hover:text-rose-700 p-1">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </div>
+          `).join('');
+        }
+      }
+    }
+
+    function toggleItemStatus(itemId) {
+      const b = appState.data.booths.find(x => x.id === appState.currentBoothId);
+      if (!b || !b.items) return;
+      const it = b.items.find(x => x.id === itemId);
+      if (it) {
+        it.status = (it.status === '熱賣中') ? '已完售' : '熱賣中';
+        persistData();
+        renderStalls();
+        renderBoothControlStation();
+      }
+    }
+
+    function deleteBoothItem(itemId) {
+      const b = appState.data.booths.find(x => x.id === appState.currentBoothId);
+      if (!b || !b.items) return;
+      b.items = b.items.filter(x => x.id !== itemId);
+      persistData();
+      renderStalls();
+      renderBoothControlStation();
+      showToast('商品已移除', 'info');
+    }
+
+    function deleteBoothDeal(dealId) {
+      const b = appState.data.booths.find(x => x.id === appState.currentBoothId);
+      if (!b || !b.deals) return;
+      b.deals = b.deals.filter(x => x.id !== dealId);
+      persistData();
+      renderDeals();
+      renderBoothControlStation();
+      showToast('特價已下架', 'info');
+    }
+
+    function openItemModal() {
+      document.getElementById('modalItemName').value = '';
+      document.getElementById('modalItemPrice').value = '';
+      document.getElementById('modalItemNote').value = '';
+      document.getElementById('modalItemStatus').value = '熱賣中';
+      openModal('itemModal');
+    }
+
+    function handleSaveItem(event) {
+      event.preventDefault();
+      const b = appState.data.booths.find(x => x.id === appState.currentBoothId);
+      if (!b) return;
+
+      const name = document.getElementById('modalItemName').value.trim();
+      const price = Number(document.getElementById('modalItemPrice').value) || 0;
+      const status = document.getElementById('modalItemStatus').value;
+      const note = document.getElementById('modalItemNote').value.trim();
+
+      if (!b.items) b.items = [];
+      b.items.push({ id: 'i_' + Date.now(), name, price, status, note });
+
+      persistData();
+      renderStalls();
+      renderBoothControlStation();
+      closeModal('itemModal');
+      showToast('新商品上架成功！', 'success');
+      autoSyncIfNeeded();
+    }
+
+    function openDealModal() {
+      document.getElementById('dealTitleInput').value = '';
+      document.getElementById('dealOrigPriceInput').value = '';
+      document.getElementById('dealPromoPriceInput').value = '';
+      document.getElementById('dealDescInput').value = '';
+      document.getElementById('dealImageUrlInput').value = '';
+      document.getElementById('dealImageFileInput').value = '';
+      document.getElementById('dealImagePreviewBox').classList.add('hidden');
+      currentDealCompressedBase64 = '';
+      openModal('dealModal');
+    }
+
+    function renderAdminControlStation() {
+      const boothCount = appState.data.booths.length;
+      const totalSlots = appState.allConfiguredSlots.length;
+      const assignedCount = appState.data.booths.filter(b => b.location && b.location !== '待抽籤').length;
+      const unassignedCount = Math.max(0, totalSlots - assignedCount);
+
+      document.getElementById('statBoothCount').innerText = boothCount;
+      document.getElementById('statTotalSlots').innerText = totalSlots;
+      document.getElementById('statAssignedSlots').innerText = assignedCount;
+      document.getElementById('statUnassignedSlots').innerText = unassignedCount;
+
+      renderLotteryModule();
+      renderAdminBoothsList();
+    }
+
+    function renderAdminBoothsList() {
+      const container = document.getElementById('adminBoothsList');
+      if (!container) return;
+      container.innerHTML = appState.data.booths.map(b => `
+        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-3">
+          <div class="flex-1 min-w-0">
+            <div class="font-extrabold text-slate-800 truncate">${b.classId} 班 - ${b.name}</div>
+            <div class="text-xs text-slate-500 font-mono mt-0.5">編號：${b.location || '待抽籤'} ｜ 密碼：•••••</div>
+          </div>
+          <button onclick="impersonateBooth('${b.id}')" class="shrink-0 whitespace-nowrap px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs border border-indigo-200 transition">
+            進入維護
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function initLotterySlots() {
+      const savedSlots = localStorage.getItem('jl_carnival_slots_v5');
+      if (savedSlots) {
+        try {
+          appState.allConfiguredSlots = JSON.parse(savedSlots);
+        } catch(e) {
+          console.error(e);
+        }
+      }
+      if (!appState.allConfiguredSlots || appState.allConfiguredSlots.length === 0) {
+        appState.allConfiguredSlots = [
+          'A-01','A-02','A-03','A-04','A-05','A-06','A-07','A-08','A-09','A-10',
+          'B-01','B-02','B-03','B-04','B-05','B-06','B-07','B-08',
+          'C-01','C-02','C-03','C-04','C-05'
+        ];
+      }
+      refreshAvailableLotterySlots();
+    }
+
+    function refreshAvailableLotterySlots() {
+      const assigned = new Set(appState.data.booths.map(b => b.location).filter(l => l && l !== '待抽籤'));
+      appState.lotterySlots = appState.allConfiguredSlots.filter(s => !assigned.has(s));
+    }
+
+    function renderLotteryModule() {
+      refreshAvailableLotterySlots();
+      const select = document.getElementById('lotteryClassSelect');
+      const table = document.getElementById('lotteryResultsTable');
+      const remainingText = document.getElementById('lotteryRemainingSlotsText');
+
+      if (remainingText) {
+        remainingText.innerText = `籤池剩餘可用號碼：${appState.lotterySlots.length} 個`;
+      }
+
+      const unassignedBooths = appState.data.booths.filter(b => !b.location || b.location === '待抽籤');
+      if (select) {
+        if (unassignedBooths.length === 0) {
+          select.innerHTML = '<option value="">-- 全數班級皆已完成抽籤分配 --</option>';
+        } else {
+          select.innerHTML = unassignedBooths.map(b => `
+            <option value="${b.id}">${b.classId} 班 - ${b.name}</option>
+          `).join('');
+        }
+      }
+
+      if (table) {
+        table.innerHTML = `
+          <table class="w-full text-left text-xs sm:text-sm">
+            <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold sticky top-0">
+              <tr>
+                <th class="p-2.5">班級代碼</th>
+                <th class="p-2.5">攤位名稱</th>
+                <th class="p-2.5">目前抽中編號</th>
+                <th class="p-2.5 text-center">操作</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 font-medium">
+              ${appState.data.booths.map(b => `
+                <tr class="hover:bg-slate-50">
+                  <td class="p-2.5 font-bold text-slate-800">${b.classId} 班</td>
+                  <td class="p-2.5 truncate max-w-[150px]">${b.name}</td>
+                  <td class="p-2.5 font-mono font-bold ${b.location && b.location !== '待抽籤' ? 'text-indigo-600' : 'text-slate-400'}">
+                    ${b.location || '待抽籤'}
+                  </td>
+                  <td class="p-2.5 text-center">
+                    ${b.location && b.location !== '待抽籤' ? `
+                      <button onclick="resetSingleBoothLottery('${b.id}')" class="text-rose-500 hover:text-rose-700 text-xs font-bold">
+                        釋放重抽
+                      </button>
+                    ` : '<span class="text-slate-300 text-xs">--</span>'}
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+      }
+    }
+
+    function startSingleDraw() {
+      const select = document.getElementById('lotteryClassSelect');
+      const boothId = select?.value;
+      if (!boothId) {
+        showToast('目前沒有待抽籤的班級！', 'warn');
+        return;
+      }
+      if (appState.lotterySlots.length === 0) {
+        showToast('籤池已無剩餘可用號碼！請先擴充編號池。', 'error');
+        return;
+      }
+
+      const booth = appState.data.booths.find(b => b.id === boothId);
+      const displayEl = document.getElementById('lotteryRollingSlotDisplay');
+      const btn = document.getElementById('startSingleDrawBtn');
+      btn.disabled = true;
+
+      let counter = 0;
+      const interval = setInterval(() => {
+        const rand = appState.lotterySlots[Math.floor(Math.random() * appState.lotterySlots.length)];
+        displayEl.innerText = rand;
+        counter++;
+        if (counter > 18) {
+          clearInterval(interval);
+          const chosenIdx = Math.floor(Math.random() * appState.lotterySlots.length);
+          const finalSlot = appState.lotterySlots.splice(chosenIdx, 1)[0];
+          displayEl.innerText = finalSlot;
+
+          booth.location = finalSlot;
+          booth.zone = (finalSlot.startsWith('A') ? 'A區' : (finalSlot.startsWith('B') ? 'B區' : 'C區'));
+
+          persistData();
+          renderStalls();
+          renderVenueMap();
+          renderLotteryModule();
+          btn.disabled = false;
+          showToast(`🎉 恭喜【${booth.classId} 班】抽中攤位編號：${finalSlot}！`, 'success');
+          autoSyncIfNeeded();
+        }
+      }, 70);
+    }
+
+    function autoAssignAllSlots() {
+      const unassigned = appState.data.booths.filter(b => !b.location || b.location === '待抽籤');
+      if (unassigned.length === 0) {
+        showToast('所有班級皆已指派攤位編號！', 'info');
+        return;
+      }
+      if (appState.lotterySlots.length < unassigned.length) {
+        showToast(`可用號碼不足！待抽籤班級 ${unassigned.length} 班，剩餘號碼僅 ${appState.lotterySlots.length} 個。`, 'error');
+        return;
+      }
+
+      const shuffled = [...appState.lotterySlots].sort(() => Math.random() - 0.5);
+      unassigned.forEach(b => {
+        const slot = shuffled.pop();
+        b.location = slot;
+        b.zone = (slot.startsWith('A') ? 'A區' : (slot.startsWith('B') ? 'B區' : 'C區'));
+      });
+
+      persistData();
+      renderStalls();
+      renderVenueMap();
+      renderLotteryModule();
+      showToast('已一鍵全數公正隨機分發攤位編號！', 'success');
+      autoSyncIfNeeded();
+    }
+
+    function resetSingleBoothLottery(boothId) {
+      const b = appState.data.booths.find(x => x.id === boothId);
+      if (b) {
+        b.location = '待抽籤';
+        persistData();
+        renderStalls();
+        renderVenueMap();
+        renderLotteryModule();
+        showToast(`已釋放【${b.classId} 班】號碼回籤池`, 'info');
+      }
+    }
+
+    function exportLotteryCSV() {
+      let csv = '\uFEFF班級代碼,攤位名稱,所屬分區,攤位編號,負責人,指導導師\n';
+      appState.data.booths.forEach(b => {
+        csv += `"${b.classId}","${b.name}","${b.zone || ''}","${b.location || '待抽籤'}","${b.leader || ''}","${b.teacher || ''}"\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `115佳林國中園遊會_攤位抽籤位置名冊_${Date.now()}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('已成功匯出 CSV 名冊！', 'success');
+    }
+
+    function openAccountManageModal() {
+      resetAccForm();
+      renderAccountTable();
+      openModal('accountManageModal');
+    }
+
+    function resetAccForm() {
+      document.getElementById('accEditBoothId').value = '';
+      document.getElementById('accClassIdInput').value = '';
+      document.getElementById('accBoothNameInput').value = '';
+      document.getElementById('accLeaderInput').value = '';
+      document.getElementById('accPinInput').value = '';
+      document.getElementById('accCategoryInput').value = '飲食類';
+      document.getElementById('accLocationInput').value = '';
+      document.getElementById('accFormModeTitle').innerText = '快速新增設攤單位帳號';
+    }
+
+    function renderAccountTable() {
+      const tbody = document.getElementById('accountManageTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = appState.data.booths.map(b => `
+        <tr class="hover:bg-slate-50">
+          <td class="p-2.5 font-bold text-slate-800">${b.classId} 班</td>
+          <td class="p-2.5 truncate max-w-[140px]">${b.name}</td>
+          <td class="p-2.5 font-mono font-bold">${b.location || '待抽籤'}</td>
+          <td class="p-2.5 font-mono text-teal-700 font-bold tracking-widest">•••••</td>
+          <td class="p-2.5 text-center space-x-2">
+            <button onclick="editBoothAccount('${b.id}')" class="text-indigo-600 hover:text-indigo-800 font-bold">編輯</button>
+            <button onclick="deleteBoothAccount('${b.id}')" class="text-rose-500 hover:text-rose-700 font-bold">刪除</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function editBoothAccount(id) {
+      const b = appState.data.booths.find(x => x.id === id);
+      if (!b) return;
+      document.getElementById('accEditBoothId').value = b.id;
+      document.getElementById('accClassIdInput').value = b.classId;
+      document.getElementById('accBoothNameInput').value = b.name;
+      document.getElementById('accLeaderInput').value = b.leader || '';
+      document.getElementById('accPinInput').value = b.pin;
+      document.getElementById('accCategoryInput').value = b.category || '飲食類';
+      document.getElementById('accLocationInput').value = b.location || '';
+      document.getElementById('accFormModeTitle').innerText = `編輯【${b.classId} 班】帳號資料`;
+    }
+
+    function handleSaveBoothAccount() {
+      const id = document.getElementById('accEditBoothId').value;
+      const classId = document.getElementById('accClassIdInput').value.trim();
+      const name = document.getElementById('accBoothNameInput').value.trim();
+      const leader = document.getElementById('accLeaderInput').value.trim();
+      const pin = document.getElementById('accPinInput').value.trim();
+      const category = document.getElementById('accCategoryInput').value;
+      const location = document.getElementById('accLocationInput').value.trim() || '待抽籤';
+
+      if (!classId || !name) {
+        showToast('班級代碼與攤位名稱不可為空！', 'error');
+        return;
+      }
+      if (!/^\d{5}$/.test(pin)) {
+        showToast('管理密碼必須為 5 碼純數字！', 'error');
+        return;
+      }
+
+      if (id) {
+        const b = appState.data.booths.find(x => x.id === id);
+        if (b) {
+          b.classId = classId;
+          b.name = name;
+          b.leader = leader;
+          b.pin = pin;
+          b.category = category;
+          b.location = location;
+        }
+      } else {
+        appState.data.booths.push({
+          id: 'b_' + classId + '_' + Date.now().toString().slice(-3),
+          classId,
+          name,
+          leader,
+          pin,
+          category,
+          location,
+          zone: location.startsWith('A') ? 'A區' : (location.startsWith('B') ? 'B區' : 'C區'),
+          items: [],
+          deals: []
+        });
+      }
+
+      persistData();
+      renderStalls();
+      renderAccountTable();
+      populateBoothLoginSelect();
+      renderLotteryModule();
+      resetAccForm();
+      showToast('攤位帳號資料已儲存！', 'success');
+      autoSyncIfNeeded();
+    }
+
+    function deleteBoothAccount(id) {
+      appState.data.booths = appState.data.booths.filter(x => x.id !== id);
+      persistData();
+      renderStalls();
+      renderAccountTable();
+      populateBoothLoginSelect();
+      renderLotteryModule();
+      showToast('帳號已刪除', 'info');
+      autoSyncIfNeeded();
+    }
+
+    function openSlotManageModal() {
+      renderModalSlotTags();
+      openModal('slotManageModal');
+    }
+
+    function renderModalSlotTags() {
+      const container = document.getElementById('modalSlotTagsList');
+      if (!container) return;
+      const assigned = new Map();
+      appState.data.booths.forEach(b => {
+        if (b.location && b.location !== '待抽籤') assigned.set(b.location, b.classId);
+      });
+
+      container.innerHTML = appState.allConfiguredSlots.map(s => {
+        const isUsed = assigned.has(s);
+        return `
+          <div class="px-2.5 py-1 rounded-xl text-xs font-mono font-bold flex items-center gap-1.5 ${
+            isUsed ? 'bg-indigo-100 text-indigo-900 border border-indigo-300' : 'bg-white border border-slate-300 text-slate-700'
+          }">
+            <span>${s}</span>
+            ${isUsed ? `<span class="text-[10px] text-indigo-600 font-sans">(${assigned.get(s)}班)</span>` : `
+              <button onclick="removeConfiguredSlot('${s}')" class="text-rose-400 hover:text-rose-600">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            `}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function handleBatchGenerateSlots() {
+      const prefix = document.getElementById('slotBatchPrefix').value;
+      const from = Number(document.getElementById('slotBatchFrom').value) || 1;
+      const to = Number(document.getElementById('slotBatchTo').value) || 10;
+
+      for (let i = from; i <= to; i++) {
+        const numStr = i < 10 ? '0' + i : '' + i;
+        const code = `${prefix}-${numStr}`;
+        if (!appState.allConfiguredSlots.includes(code)) {
+          appState.allConfiguredSlots.push(code);
+        }
+      }
+      appState.allConfiguredSlots.sort();
+      persistData();
+      renderModalSlotTags();
+      renderLotteryModule();
+      showToast(`已批次產生 ${prefix} 區攤位編號！`, 'success');
+    }
+
+    function removeConfiguredSlot(code) {
+      appState.allConfiguredSlots = appState.allConfiguredSlots.filter(s => s !== code);
+      persistData();
+      renderModalSlotTags();
+      renderLotteryModule();
+    }
+
+    function openScheduleSettingsModal() {
+      document.getElementById('schedRegStartInput').value = appState.schedule.registrationStart;
+      document.getElementById('schedRegEndInput').value = appState.schedule.registrationEnd;
+      openModal('scheduleSettingsModal');
+    }
+
+    function saveScheduleSettings() {
+      appState.schedule.registrationStart = document.getElementById('schedRegStartInput').value;
+      appState.schedule.registrationEnd = document.getElementById('schedRegEndInput').value;
+      persistData();
+      updateScheduleDisplay();
+      closeModal('scheduleSettingsModal');
+      showToast('線上報名時程已儲存！', 'success');
+    }
+
+    function updateScheduleDisplay() {
+      const banner = document.getElementById('regScheduleStatusText');
+      if (!banner) return;
+      const now = new Date();
+      const start = new Date(appState.schedule.registrationStart);
+      const end = new Date(appState.schedule.registrationEnd);
+
+      if (now < start) {
+        banner.innerText = `線上報名尚未開始（將於 ${appState.schedule.registrationStart.replace('T', ' ')} 開放）`;
+      } else if (now > end) {
+        banner.innerText = `線上報名已截止（已於 ${appState.schedule.registrationEnd.replace('T', ' ')} 結束）`;
+      } else {
+        banner.innerText = `線上報名開放中：至 ${appState.schedule.registrationEnd.replace('T', ' ')} 截止`;
+      }
+    }
+
+    function copyGasCode() {
+      const code = `
+/* 115學年度佳林國中校慶園遊會 - Google Apps Script 雲端同步程式碼 */
+function doGet(e) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName("園遊會資料庫");
+  if (!sheet) {
+    sheet = ss.insertSheet("園遊會資料庫");
+    sheet.getRange(1, 1).setValue("{}");
+  }
+  var json = sheet.getRange(1, 1).getValue();
+  return ContentService.createTextOutput(json || "{}").setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+  try {
+    var rawData = e.postData.contents;
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName("園遊會資料庫");
+    if (!sheet) {
+      sheet = ss.insertSheet("園遊會資料庫");
+    }
+    // 寫入儲存格 A1 做為 JSON 資料庫
+    sheet.getRange(1, 1).setValue(rawData);
+    
+    // 記錄最後更新時間
+    sheet.getRange(1, 2).setValue(new Date());
+
+    return ContentService.createTextOutput(JSON.stringify({ status: "success", timestamp: new Date() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+      `.trim();
+      navigator.clipboard.writeText(code).then(() => {
+        showToast('GAS 程式碼已複製至剪貼簿！可貼至試算表 Apps Script', 'success');
+      }).catch(() => {
+        showToast('請手動複製程式碼', 'warn');
+      });
+    }
+
+    function saveGasSettings() {
+      appState.gasUrl = document.getElementById('gasAppUrlInput').value.trim();
+      localStorage.setItem('jl_carnival_gas_url', appState.gasUrl);
+      const dot = document.getElementById('gasStatusDot');
+      if (dot) dot.className = appState.gasUrl ? 'w-2.5 h-2.5 rounded-full bg-emerald-500' : 'w-2.5 h-2.5 rounded-full bg-slate-400';
+      closeModal('gasModal');
+      showToast('雲端同步設定已儲存！', 'success');
+      if (appState.gasUrl) syncWithGAS();
+    }
+
+    function autoSyncIfNeeded() {
+      if (appState.gasUrl) syncWithGAS();
+    }
+
+    function syncWithGAS() {
+      if (!appState.gasUrl) return;
+      const payload = {
+        data: appState.data,
+        regRules: appState.regRules,
+        slots: appState.allConfiguredSlots,
+        zones: appState.venueZones,
+        schedule: appState.schedule
+      };
+
+      fetch(appState.gasUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(data => {
+        const dot = document.getElementById('gasStatusDot');
+        if (dot) dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-emerald-300';
+        showToast('已同步寫入 Google 雲端試算表資料庫！', 'success');
+      })
+      .catch(err => {
+        console.warn('GAS Sync offline or blocked', err);
+        const dot = document.getElementById('gasStatusDot');
+        if (dot) dot.className = 'w-2.5 h-2.5 rounded-full bg-amber-500';
+        showToast('雲端連線失敗，已自動切換回本機安全保存。請確認 GAS 部署是否設為「任何人」！', 'warn');
+      });
+    }
+
+    function testGasConnection() {
+      const url = document.getElementById('gasAppUrlInput').value.trim();
+      if (!url) {
+        showToast('請先輸入 Web App URL！', 'error');
+        return;
+      }
+      showToast('正在測試連線中...', 'info');
+      fetch(url)
+        .then(r => r.json())
+        .then(res => {
+          showToast('✅ 雲端試算表連線測試成功！', 'success');
+        })
+        .catch(err => {
+          showToast('❌ 無法連線。教育版帳號請務必確認【誰可以存取】設為「所有人」！', 'error');
+        });
+    }
+
+    function initApp() {
+      closeNoticeSheet();
+      const savedData = localStorage.getItem('jl_carnival_data_v5');
+      if (savedData) {
+        try {
+          appState.data = JSON.parse(savedData);
+        } catch(e) {
+          console.error('Data parse error', e);
+        }
+      }
+
+      const savedRules = localStorage.getItem('jl_carnival_rules_v5');
+      if (savedRules) {
+        try {
+          appState.regRules = JSON.parse(savedRules);
+        } catch(e) {
+          console.error(e);
+        }
+      }
+
+      const savedZones = localStorage.getItem('jl_carnival_zones_v5');
+      if (savedZones) {
+        try {
+          appState.venueZones = JSON.parse(savedZones);
+        } catch(e) {
+          console.error(e);
+        }
+      }
+
+      const savedSchedule = localStorage.getItem('jl_carnival_schedule_v5');
+      if (savedSchedule) {
+        try {
+          appState.schedule = JSON.parse(savedSchedule);
+        } catch(e) {
+          console.error(e);
+        }
+      }
+
+      // 優先使用已持久化或預設的 Web App 網址
+      const savedGas = localStorage.getItem('jl_carnival_gas_url') || PRE_CONFIGURED_GAS_URL;
+      if (savedGas) {
+        appState.gasUrl = savedGas;
+        const gasInput = document.getElementById('gasAppUrlInput');
+        if (gasInput) gasInput.value = savedGas;
+        const dot = document.getElementById('gasStatusDot');
+        if (dot) dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
+
+        // 啟動時自動嘗試自雲端試算表載入最新資料
+        fetch(savedGas)
+          .then(res => res.json())
+          .then(cloudData => {
+            if (cloudData && cloudData.data) {
+              appState.data = cloudData.data;
+              if (cloudData.regRules) appState.regRules = cloudData.regRules;
+              if (cloudData.slots) appState.allConfiguredSlots = cloudData.slots;
+              if (cloudData.zones) appState.venueZones = cloudData.zones;
+              if (cloudData.schedule) appState.schedule = cloudData.schedule;
+              persistData();
+              renderStalls();
+              renderDeals();
+              renderAnnouncements();
+              renderVenueMap();
+              renderRegRulesDisplay();
+              showToast('已自 Google 雲端試算表載入最新全校資料！', 'info');
+            }
+          })
+          .catch(() => console.log('Local first mode'));
+      }
+
+      initLotterySlots();
+      renderRegRulesDisplay();
+      renderCategoryChips();
+      renderStalls();
+      renderDeals();
+      renderAnnouncements();
+      renderVenueMap();
+      updateTopMarquee();
+      updateRoleUI();
+      updateScheduleDisplay();
+
+      if (powerDeviceRows.length === 0) {
+        addPowerDeviceRow('商用保溫展示燈', 150, 1, '一般延長線');
+      }
+      if (itemPriceRows.length === 0) {
+        addItemPriceRow('招牌起司炒泡麵', 60, '標準份量');
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
